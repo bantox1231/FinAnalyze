@@ -1,0 +1,1095 @@
+{
+  "reports": [
+    {
+      "bank_name": "KICB Bank",
+      "report_date": "2025-04-01",
+      "report_url": "https://kicb.net/upload/iblock/451/3iau1y0a04t58pqaaxp3zg900xvy1ooe/fr_30.04.25_01-ru.pdf",
+      "report_title": "Financial Report for April 2025",
+      "report_type": "monthly"
+    },
+    {
+      "bank_name": "Optima Bank",
+      "report_date": "2025-04-01",
+      "report_url": "https://www.optimabank.kg/images/files/financial-reports/2025/fo-01-04-25-rus.pdf",
+      "report_title": "Financial Report for April 2025 (published 01.04.2025)",
+      "report_type": "monthly"
+    },
+    {
+      "bank_name": "Optima Bank",
+      "report_date": "2025-04-01",
+      "report_url": "https://www.optimabank.kg/images/files/financial-reports/2025/fo-15-04-25-rus.pdf",
+      "report_title": "Financial Report for April 2025 (published 15.04.2025)",
+      "report_type": "monthly"
+    },
+    {
+      "bank_name": "Optima Bank",
+      "report_date": "2025-05-01",
+      "report_url": "https://www.optimabank.kg/images/files/financial-reports/2025/fo-01-05-25-rus.pdf",
+      "report_title": "Financial Report for May 2025 (published 01.05.2025)",
+      "report_type": "monthly"
+    },
+    {
+      "bank_name": "Optima Bank",
+      "report_date": "2025-05-01",
+      "report_url": "https://www.optimabank.kg/images/files/financial-reports/2025/fo-15-05-25-rus.pdf",
+      "report_title": "Financial Report for May 2025 (published 15.05.2025)",
+      "report_type": "monthly"
+    },
+    {
+      "bank_name": "DemirBank",
+      "report_date": "2025-04-01",
+      "report_url": "https://demirbank.kg/uploads/pages/fsapril-2025-ifrs-rus-ec21da3f65.pdf",
+      "report_title": "Financial Report for April 2025",
+      "report_type": "monthly"
+    },
+    {
+      "bank_name": "РСК Банк",
+      "report_date": "2025-04-01",
+      "report_url": "https://www.rsk.kg/media/reports/ФО_за_30.04.25_по_НБКР_для_публикации.PDF",
+      "report_title": "Financial Report for April 2025",
+      "report_type": "monthly"
+    }
+  ],
+  "analyses": {
+    "KICB Bank": {
+      "bank_name": "ЗАО \"КИКБ\"",
+      "current_period": "30.04.2025",
+      "comparative_periods": [
+        "31.12.2024",
+        "30.04.2024"
+      ],
+      "balance": {
+        "assets": {
+          "total": {
+            "current": 48821242,
+            "previous_year_end": 46598530,
+            "previous_period_same": 43135240,
+            "change_since_year_end": 2222712,
+            "change_since_year_end_percent": 4.77,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Денежные средства и их эквиваленты",
+              "current": 12107000,
+              "previous_year_end": 12076000,
+              "previous_period_same": 11460000,
+              "share_in_total": 24.8,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Средства в Национальном банке",
+              "current": 2346000,
+              "previous_year_end": 2321000,
+              "previous_period_same": 1542000,
+              "share_in_total": 4.8,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Кредиты и авансы клиентам",
+              "current": 28581000,
+              "previous_year_end": 26517000,
+              "previous_period_same": 24249000,
+              "share_in_total": 58.5,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Инвестиции в ценные бумаги",
+              "current": 2103000,
+              "previous_year_end": 2731000,
+              "previous_period_same": 3258000,
+              "share_in_total": 4.3,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Основные средства",
+              "current": 1084000,
+              "previous_year_end": 1097000,
+              "previous_period_same": 1054000,
+              "share_in_total": 2.2,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Прочие активы",
+              "current": 1499242,
+              "previous_year_end": 1856530,
+              "previous_period_same": 1572240,
+              "share_in_total": 3.1,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "liabilities": {
+          "total": {
+            "current": 41569150,
+            "previous_year_end": 39592957,
+            "previous_period_same": 36539814,
+            "change_since_year_end": 1976193,
+            "change_since_year_end_percent": 4.99,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Кредиты и депозиты банков",
+              "current": 2303000,
+              "previous_year_end": 2303000,
+              "previous_period_same": 2303000,
+              "share_in_total": 5.5,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Депозиты клиентов",
+              "current": 34556000,
+              "previous_year_end": 32778000,
+              "previous_period_same": 29700000,
+              "share_in_total": 83.1,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Прочие обязательства",
+              "current": 4710150,
+              "previous_year_end": 4511957,
+              "previous_period_same": 4536814,
+              "share_in_total": 11.4,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "equity": {
+          "total": {
+            "current": 7252092,
+            "previous_year_end": 7005573,
+            "previous_period_same": 6595426,
+            "change_since_year_end": 246519,
+            "change_since_year_end_percent": 3.52,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Уставный капитал",
+              "current": 1581760,
+              "previous_year_end": 1581760,
+              "previous_period_same": 1581760,
+              "share_in_total": 21.8,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Нераспределенная прибыль",
+              "current": 5659561,
+              "previous_year_end": 5415000,
+              "previous_period_same": 4991000,
+              "share_in_total": 78,
+              "unit": "тыс. сом"
+            }
+          ]
+        }
+      },
+      "income_statement": {
+        "available": true,
+        "net_profit": {
+          "current": 244467,
+          "previous_period_same": 227877,
+          "change": 16590,
+          "change_percent": 7.28,
+          "unit": "тыс. сом"
+        },
+        "net_interest_income": {
+          "current": 823110,
+          "previous_period_same": 667768,
+          "unit": "тыс. сом"
+        },
+        "net_fee_income": {
+          "current": 144451,
+          "previous_period_same": 130537,
+          "unit": "тыс. сом"
+        }
+      },
+      "ratios": {
+        "liquidity": {
+          "lcr": {
+            "current": 428.2,
+            "previous": 349.5,
+            "regulatory_minimum": 100
+          },
+          "loan_to_deposit": {
+            "current": 82.7,
+            "previous": 80.9
+          }
+        },
+        "capital_adequacy": {
+          "car": {
+            "current": 19.2,
+            "previous": 19.2,
+            "regulatory_minimum": 12
+          },
+          "tier1": {
+            "current": 19.2,
+            "previous": 19.2,
+            "regulatory_minimum": 6
+          },
+          "leverage": {
+            "current": 17.5,
+            "previous": 17.7,
+            "regulatory_minimum": 8
+          },
+          "capital_buffer": {
+            "current": 2.5,
+            "previous": 2.5,
+            "regulatory_minimum": 2.5
+          }
+        },
+        "profitability": {
+          "roa": {
+            "current": 2.1,
+            "previous": 2.1,
+            "annualized": true
+          },
+          "roe": {
+            "current": 13.6,
+            "previous": 13.8,
+            "annualized": true
+          }
+        },
+        "efficiency": {
+          "cir": {
+            "current": 65.4,
+            "previous": 62.9
+          }
+        }
+      },
+      "summary": {
+        "strengths": [
+          "Рост общих активов на 4.77% по сравнению с концом предыдущего года (с 46598530 до 48821242 тыс. сом)",
+          "Увеличение чистой прибыли на 7.28% по сравнению с аналогичным периодом прошлого года (с 227877 до 244467 тыс. сом)",
+          "Высокий показатель LCR - 428.2% при регуляторном минимуме 100%"
+        ],
+        "attention_points": [
+          "Незначительное снижение ROE с 13.8% до 13.6%",
+          "Незначительное снижение коэффициента левериджа с 17.7% до 17.5%"
+        ],
+        "conclusion": "Банк демонстрирует хорошие финансовые результаты за отчетный период. Наблюдается рост активов и прибыли, а также поддержание высоких показателей ликвидности и достаточности капитала. Необходимо обратить внимание на незначительное снижение рентабельности капитала."
+      },
+      "full_report": "В течение отчетного периода ЗАО “КИКБ” продолжил свою деятельность, направленную на укрепление своих позиций на финансовом рынке Кыргызской Республики. Данный отчет представляет собой обзор основных финансовых показателей Банка по состоянию на 30 апреля 2025 года. Обзор включает в себя анализ ключевых показателей финансового положения, финансовых результатов, а также финансовых коэффициентов, что позволяет оценить текущее состояние Банка и перспективы его развития.\n\nОбзор подготовлен на основе данных консолидированной финансовой отчетности ЗАО “КИКБ”, составленной в соответствии с Международными стандартами финансовой отчетности (МСФО). Отчет содержит информацию в тысячах сомов, если не указано иное.\n\nI. Ключевые показатели финансового положения (Баланс)\n\nОбщие активы ЗАО “КИКБ” на 30 апреля 2025 года составили 48 821 242 тыс. сом, увеличившись на 4,77% по сравнению с 31 декабря 2024 года (46 598 530 тыс. сом). Рост активов в основном обусловлен увеличением кредитного портфеля и объема денежных средств.\n\nОбязательства Банка на отчетную дату составили 41 569 150 тыс. сом, увеличившись на 4,99% по сравнению с концом предыдущего года (39 592 957 тыс. сом). Рост обязательств в основном связан с увеличением депозитной базы клиентов.\n\nСобственный капитал Банка на 30 апреля 2025 года составил 7 252 092 тыс. сом, увеличившись на 3,52% по сравнению с 31 декабря 2024 года (7 005 573 тыс. сом). Увеличение капитала обусловлено ростом нераспределенной прибыли.\n\nII. Ключевые показатели финансовых результатов (Отчет о прибылях и убытках)\n\nЗа период с начала года по 30 апреля 2025 года ЗАО “КИКБ” получил чистую прибыль в размере 244 467 тыс. сом, что на 7,28% больше, чем за аналогичный период прошлого года (227 877 тыс. сом). Рост прибыли обусловлен увеличением чистого процентного дохода и комиссионных доходов.\n\nЧистый процентный доход за отчетный период составил 823 110 тыс. сом, что на 23,26% больше, чем за аналогичный период прошлого года (667 768 тыс. сом).\n\nЧистый комиссионный доход за отчетный период составил 144 451 тыс. сом, что на 10,66% больше, чем за аналогичный период прошлого года (130 537 тыс. сом).\n\nIII. Финансовые коэффициенты\n\nКоэффициент текущей ликвидности (LCR) на 30 апреля 2025 года составил 428,2%, что значительно превышает установленный регуляторный минимум в 100%. Коэффициент Loan-to-Deposit составил 82,7%.\n\nКоэффициент достаточности капитала (CAR) на 30 апреля 2025 года составил 19,2%, что также значительно превышает установленный регуляторный минимум в 12%. Коэффициент достаточности капитала 1-го уровня составил 19,2%, коэффициент левериджа – 17,5%.\n\nРентабельность активов (ROA) за 12 месяцев, закончившихся 30 апреля 2025 года, составила 2,1%. Рентабельность собственного капитала (ROE) за аналогичный период составила 13,6%.\n\nОтношение операционных расходов к доходам (CIR) за отчетный период составило 65,4%.\n\nЗАКЛЮЧЕНИЕ\n\nНа основе проведенного анализа можно сделать вывод о стабильном финансовом состоянии ЗАО “КИКБ” на 30 апреля 2025 года. Банк демонстрирует устойчивый рост активов, обязательств и капитала, а также прибыльность операций. Высокие показатели ликвидности и достаточности капитала свидетельствуют о финансовой устойчивости Банка и его способности выполнять свои обязательства перед клиентами и партнерами. Банк продолжит свою деятельность, направленную на улучшение качества предоставляемых услуг и укрепление своих позиций на рынке."
+    },
+    "Optima Bank": {
+      "bank_name": "ОАО «Оптима Банк»",
+      "current_period": "30.04.2025",
+      "comparative_periods": [
+        "31.12.2024",
+        "30.04.2024"
+      ],
+      "balance": {
+        "assets": {
+          "total": {
+            "current": 53377105,
+            "previous_year_end": 50517865,
+            "previous_period_same": 46011378,
+            "change_since_year_end": 2859240,
+            "change_since_year_end_percent": 5.66,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Денежные средства и их эквиваленты",
+              "current": 6243904,
+              "previous_year_end": 6504629,
+              "previous_period_same": 6144288,
+              "share_in_total": 11.69,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Средства в кредитных организациях",
+              "current": 4962088,
+              "previous_year_end": 3594497,
+              "previous_period_same": 3990370,
+              "share_in_total": 9.29,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Кредиты и авансы клиентам",
+              "current": 37326291,
+              "previous_year_end": 34776890,
+              "previous_period_same": 30970640,
+              "share_in_total": 69.93,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Инвестиции, удерживаемые до погашения",
+              "current": 137657,
+              "previous_year_end": 137657,
+              "previous_period_same": 137657,
+              "share_in_total": 0.26,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Инвестиции, имеющиеся в наличии для продажи",
+              "current": 2963655,
+              "previous_year_end": 3049870,
+              "previous_period_same": 3022923,
+              "share_in_total": 5.55,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Основные средства и нематериальные активы",
+              "current": 1511875,
+              "previous_year_end": 1550067,
+              "previous_period_same": 1477718,
+              "share_in_total": 2.83,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Прочие активы",
+              "current": 5603641,
+              "previous_year_end": 8904255,
+              "previous_period_same": 5267782,
+              "share_in_total": 10.5,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "liabilities": {
+          "total": {
+            "current": 44416101,
+            "previous_year_end": 41760593,
+            "previous_period_same": 37647679,
+            "change_since_year_end": 2655508,
+            "change_since_year_end_percent": 6.36,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Средства кредитных организаций",
+              "current": 3295333,
+              "previous_year_end": 3414993,
+              "previous_period_same": 2559817,
+              "share_in_total": 7.42,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Текущие счета и депозиты клиентов",
+              "current": 38980921,
+              "previous_year_end": 36566170,
+              "previous_period_same": 33432670,
+              "share_in_total": 87.76,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Прочие обязательства",
+              "current": 2139847,
+              "previous_year_end": 1779430,
+              "previous_period_same": 1655192,
+              "share_in_total": 4.82,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "equity": {
+          "total": {
+            "current": 8961004,
+            "previous_year_end": 8757272,
+            "previous_period_same": 8363699,
+            "change_since_year_end": 203732,
+            "change_since_year_end_percent": 2.33,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Уставный капитал",
+              "current": 4440000,
+              "previous_year_end": 4440000,
+              "previous_period_same": 4440000,
+              "share_in_total": 49.54,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Нераспределенная прибыль",
+              "current": 4435273,
+              "previous_year_end": 4215774,
+              "previous_period_same": 3823808,
+              "share_in_total": 49.5,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Эмиссионный доход",
+              "current": 85731,
+              "previous_year_end": 85731,
+              "previous_period_same": 85731,
+              "share_in_total": 0.96,
+              "unit": "тыс. сом"
+            }
+          ]
+        }
+      },
+      "income_statement": {
+        "available": true,
+        "net_profit": {
+          "current": 219499,
+          "previous_period_same": 557376,
+          "change": -337877,
+          "change_percent": -60.62,
+          "unit": "тыс. сом"
+        },
+        "net_interest_income": {
+          "current": 1472262,
+          "previous_period_same": 1335514,
+          "unit": "тыс. сом"
+        },
+        "net_fee_income": {
+          "current": 436235,
+          "previous_period_same": 418132,
+          "unit": "тыс. сом"
+        }
+      },
+      "ratios": {
+        "liquidity": {
+          "lcr": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": null
+          },
+          "loan_to_deposit": {
+            "current": 95.76,
+            "previous": 94.56
+          }
+        },
+        "capital_adequacy": {
+          "car": {
+            "current": 18.36,
+            "previous": 18.92,
+            "regulatory_minimum": 12
+          },
+          "tier1": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": 6
+          },
+          "leverage": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": 8
+          },
+          "capital_buffer": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": 2.5
+          }
+        },
+        "profitability": {
+          "roa": {
+            "current": 0.43,
+            "previous": 1.28,
+            "annualized": true
+          },
+          "roe": {
+            "current": 0.99,
+            "previous": 2.67,
+            "annualized": true
+          }
+        },
+        "efficiency": {
+          "cir": {
+            "current": 78.08,
+            "previous": 62.49
+          }
+        }
+      },
+      "summary": {
+        "strengths": [
+          "Рост общих активов на 5.66% по сравнению с концом предыдущего года (с 50517865 до 53377105 тыс. сом)",
+          "Увеличение чистого процентного дохода на 10.23% по сравнению с аналогичным периодом прошлого года (с 1335514 до 1472262 тыс. сом)",
+          "Рост чистого комиссионного дохода на 4.33% по сравнению с аналогичным периодом прошлого года (с 418132 до 436235 тыс. сом)"
+        ],
+        "attention_points": [
+          "Снижение чистой прибыли на 60.62% по сравнению с аналогичным периодом прошлого года (с 557376 до 219499 тыс. сом)",
+          "Ухудшение показателя CIR с 62.49% до 78.08%",
+          "Снижение рентабельности активов (ROA) с 1.28% до 0.43%"
+        ],
+        "conclusion": "Несмотря на рост активов и доходов, наблюдается значительное снижение чистой прибыли, что негативно сказывается на показателях рентабельности. Необходимо обратить внимание на факторы, повлиявшие на снижение прибыльности."
+      },
+      "full_report": "В целях повышения прозрачности своей деятельности ОАО «Оптима Банк» публикует промежуточную сокращенную консолидированную финансовую отчетность за 3 месяца, закончившихся 30 апреля 2025 года, и Отчет независимых аудиторов по рассмотрению промежуточной сокращенной консолидированной финансовой отчетности. Данная отчетность была подготовлена в соответствии с Международным стандартом финансовой отчетности (IAS) 34 «Промежуточная финансовая отчетность». Ответственность за подготовку и представление данной промежуточной сокращенной консолидированной финансовой отчетности несет руководство ОАО «Оптима Банк». Данная промежуточная сокращенная консолидированная финансовая отчетность не была предметом аудита. \n\nI. Ключевые показатели финансового положения (Баланс):\nОбщие активы Банка по состоянию на 30 апреля 2025 года составили 53 377,1 млн. сом, увеличившись с начала 2025 года на 5,66% или на 2 859,2 млн. сом (31 декабря 2024 года – 50 517,9 млн. сом). Основной объем активов Банка приходится на кредитный портфель, который составил 37 326,3 млн. сом, увеличившись с начала года на 7,33% или на 2 549,4 млн. сом (31 декабря 2024 года – 34 776,9 млн. сом).\nОбщий объем обязательств Банка по состоянию на 30 апреля 2025 года составил 44 416,1 млн. сом, увеличившись с начала 2025 года на 6,36% или на 2 655,5 млн. сом (31 декабря 2024 года – 41 760,6 млн. сом). Основную часть обязательств Банка составляют средства клиентов, объем которых составил 38 980,9 млн. сом, увеличившись с начала года на 6,61% или на 2 414,7 млн. сом (31 декабря 2024 года – 36 566,2 млн. сом).\nСобственный капитал Банка по состоянию на 30 апреля 2025 года составил 8 961,0 млн. сом, увеличившись с начала 2025 года на 2,33% или на 203,7 млн. сом (31 декабря 2024 года – 8 757,3 млн. сом).\nII. Ключевые показатели финансовых результатов (Отчет о прибылях и убытках):\nЗа 3 месяца 2025 года Банк получил чистую прибыль в размере 219,5 млн. сом, что на 60,62% меньше, чем за аналогичный период 2024 года (3 месяца 2024 года – 557,4 млн. сом). Снижение чистой прибыли произошло в основном за счет увеличения расходов по созданию резерва под убытки.\nЧистый процентный доход Банка за 3 месяца 2025 года составил 1 472,3 млн. сом, увеличившись на 10,23% по сравнению с аналогичным периодом 2024 года (3 месяца 2024 года – 1 335,5 млн. сом). Чистый комиссионный доход Банка за 3 месяца 2025 года составил 436,2 млн. сом, увеличившись на 4,33% по сравнению с аналогичным периодом 2024 года (3 месяца 2024 года – 418,1 млн. сом).\nIII. Финансовые коэффициенты:\nКоэффициент ликвидности (Loan to Deposit Ratio) составил 95,76% (на 30 апреля 2024 года – 94,56%). Показатели достаточности капитала Банка соответствуют установленным нормативным требованиям Национального банка Кыргызской Республики. Коэффициент достаточности капитала (CAR) составил 18,36% (на 31 декабря 2024 года – 18,92%). Рентабельность активов (ROA) составила 0,43%, рентабельность капитала (ROE) составила 0,99%. Уровень CIR (Cost to Income Ratio) составил 78,08%."
+    },
+    "DemirBank": {
+      "bank_name": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+      "current_period": "30.04.2025",
+      "comparative_periods": [
+        "31.12.2024",
+        "30.04.2024"
+      ],
+      "balance": {
+        "assets": {
+          "total": {
+            "current": 45189858,
+            "previous_year_end": 41787811,
+            "previous_period_same": 38044100,
+            "change_since_year_end": 3402047,
+            "change_since_year_end_percent": 8.14,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Денежные средства и их эквиваленты",
+              "current": 6867555,
+              "previous_year_end": 6136456,
+              "previous_period_same": 5793376,
+              "share_in_total": 15.19,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Кредиты и авансы клиентам",
+              "current": 28908573,
+              "previous_year_end": 26540121,
+              "previous_period_same": 22661082,
+              "share_in_total": 64,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Инвестиции в ценные бумаги",
+              "current": 5358242,
+              "previous_year_end": 5118801,
+              "previous_period_same": 5475899,
+              "share_in_total": 11.86,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Основные средства",
+              "current": 1526499,
+              "previous_year_end": 1565638,
+              "previous_period_same": 1487265,
+              "share_in_total": 3.38,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "liabilities": {
+          "total": {
+            "current": 37420450,
+            "previous_year_end": 34459108,
+            "previous_period_same": 31534661,
+            "change_since_year_end": 2961342,
+            "change_since_year_end_percent": 8.59,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Средства клиентов",
+              "current": 32281786,
+              "previous_year_end": 29558775,
+              "previous_period_same": 26680344,
+              "share_in_total": 86.26,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "equity": {
+          "total": {
+            "current": 7769408,
+            "previous_year_end": 7328703,
+            "previous_period_same": 6509439,
+            "change_since_year_end": 440705,
+            "change_since_year_end_percent": 6.01,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Нераспределенная прибыль",
+              "current": 6869135,
+              "previous_year_end": 6488695,
+              "previous_period_same": 5725172,
+              "share_in_total": 88.41,
+              "unit": "тыс. сом"
+            }
+          ]
+        }
+      },
+      "income_statement": {
+        "available": true,
+        "net_profit": {
+          "current": 540169,
+          "previous_period_same": 704279,
+          "change": -164110,
+          "change_percent": -23.3,
+          "unit": "тыс. сом"
+        },
+        "net_interest_income": {
+          "current": 1026483,
+          "previous_period_same": 985403,
+          "unit": "тыс. сом"
+        },
+        "net_fee_income": {
+          "current": 269675,
+          "previous_period_same": 239670,
+          "unit": "тыс. сом"
+        }
+      },
+      "ratios": {
+        "liquidity": {
+          "lcr": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": 100
+          },
+          "loan_to_deposit": {
+            "current": 89.55,
+            "previous": 89.79
+          }
+        },
+        "capital_adequacy": {
+          "car": {
+            "current": 18.66,
+            "previous": 18.88,
+            "regulatory_minimum": 12
+          },
+          "tier1": {
+            "current": 18.66,
+            "previous": 18.88,
+            "regulatory_minimum": 6
+          },
+          "leverage": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": 8
+          },
+          "capital_buffer": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": 2.5
+          }
+        },
+        "profitability": {
+          "roa": {
+            "current": 5.01,
+            "previous": 7.23,
+            "annualized": true
+          },
+          "roe": {
+            "current": 29.46,
+            "previous": 43.29,
+            "annualized": true
+          }
+        },
+        "efficiency": {
+          "cir": {
+            "current": 57.18,
+            "previous": 50.73
+          }
+        }
+      },
+      "summary": {
+        "strengths": [
+          "Рост общих активов на 8.14% по сравнению с концом предыдущего года (с 41787811 до 45189858 тыс. сом)",
+          "Рост средств клиентов на 9.21% по сравнению с концом предыдущего года (с 29558775 до 32281786 тыс. сом)",
+          "Рост чистого комиссионного дохода на 12.52% по сравнению с аналогичным периодом прошлого года"
+        ],
+        "attention_points": [
+          "Снижение чистой прибыли на 23.3% по сравнению с аналогичным периодом прошлого года (с 704279 до 540169 тыс. сом)",
+          "Снижение рентабельности активов с 7.23% до 5.01%",
+          "Рост CIR с 50.73% до 57.18%"
+        ],
+        "conclusion": "Несмотря на снижение чистой прибыли по сравнению с аналогичным периодом прошлого года, банк демонстрирует уверенный рост активов и операционной эффективности. Необходимо обратить внимание на факторы, повлиявшие на снижение прибыльности, и предпринять меры по ее восстановлению."
+      },
+      "full_report": "Анализ финансовой отчетности ЗАО «Демир Кыргыз Интернэшнл Банк» за период, закончившийся 30 апреля 2025 года, показывает следующие ключевые тенденции:...\n(Оригинальный текстовый анализ из отчета)"
+    },
+    "РСК Банк": {
+      "bank_name": "ОАО «ФинансКредитБанк»",
+      "current_period": "30.04.2025",
+      "comparative_periods": [
+        "31.12.2024",
+        "30.04.2024"
+      ],
+      "balance": {
+        "assets": {
+          "total": {
+            "current": 26821136,
+            "previous_year_end": 25572255,
+            "previous_period_same": 24550997,
+            "change_since_year_end": 1248881,
+            "change_since_year_end_percent": 4.88,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Денежные средства и их эквиваленты",
+              "current": 2827240,
+              "previous_year_end": 2736588,
+              "previous_period_same": 3113489,
+              "share_in_total": 10.54,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Кредиты и авансы клиентам",
+              "current": 17244402,
+              "previous_year_end": 16314934,
+              "previous_period_same": 15256289,
+              "share_in_total": 64.3,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Инвестиции, удерживаемые до погашения",
+              "current": 2060334,
+              "previous_year_end": 2059432,
+              "previous_period_same": 2058297,
+              "share_in_total": 7.68,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Основные средства",
+              "current": 1716058,
+              "previous_year_end": 1669147,
+              "previous_period_same": 1610506,
+              "share_in_total": 6.39,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Прочие активы",
+              "current": 2973102,
+              "previous_year_end": 2792154,
+              "previous_period_same": 2512416,
+              "share_in_total": 11.08,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "liabilities": {
+          "total": {
+            "current": 21687907,
+            "previous_year_end": 20571912,
+            "previous_period_same": 19427629,
+            "change_since_year_end": 1115995,
+            "change_since_year_end_percent": 5.42,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Средства клиентов",
+              "current": 18274417,
+              "previous_year_end": 17383986,
+              "previous_period_same": 16348138,
+              "share_in_total": 84.26,
+              "unit": "тыс. сом"
+            },
+            {
+              "name": "Прочие обязательства",
+              "current": 3413490,
+              "previous_year_end": 3187926,
+              "previous_period_same": 3079491,
+              "share_in_total": 15.74,
+              "unit": "тыс. сом"
+            }
+          ]
+        },
+        "equity": {
+          "total": {
+            "current": 5133229,
+            "previous_year_end": 5000343,
+            "previous_period_same": 5123368,
+            "change_since_year_end": 132886,
+            "change_since_year_end_percent": 2.66,
+            "unit": "тыс. сом"
+          },
+          "components": [
+            {
+              "name": "Нераспределенная прибыль",
+              "current": 4999375,
+              "previous_year_end": 4867501,
+              "previous_period_same": 4998812,
+              "share_in_total": 97.39,
+              "unit": "тыс. сом"
+            }
+          ]
+        }
+      },
+      "income_statement": {
+        "available": true,
+        "net_profit": {
+          "current": 131860,
+          "previous_period_same": 118563,
+          "change": 13297,
+          "change_percent": 11.22,
+          "unit": "тыс. сом"
+        },
+        "net_interest_income": {
+          "current": 514056,
+          "previous_period_same": 481420,
+          "unit": "тыс. сом"
+        },
+        "net_fee_income": {
+          "current": 88471,
+          "previous_period_same": 72101,
+          "unit": "тыс. сом"
+        }
+      },
+      "ratios": {
+        "liquidity": {
+          "lcr": {
+            "current": 254.1,
+            "previous": 248.4,
+            "regulatory_minimum": 100
+          },
+          "loan_to_deposit": {
+            "current": 94.3,
+            "previous": 93.8
+          }
+        },
+        "capital_adequacy": {
+          "car": {
+            "current": 20.2,
+            "previous": 20.2,
+            "regulatory_minimum": 12
+          },
+          "tier1": {
+            "current": 17.7,
+            "previous": 17.7,
+            "regulatory_minimum": 6
+          },
+          "leverage": {
+            "current": 11.9,
+            "previous": 12.1,
+            "regulatory_minimum": 8
+          },
+          "capital_buffer": {
+            "current": null,
+            "previous": null,
+            "regulatory_minimum": 2.5
+          }
+        },
+        "profitability": {
+          "roa": {
+            "current": 2,
+            "previous": 1.9,
+            "annualized": true
+          },
+          "roe": {
+            "current": 10.4,
+            "previous": 9.5,
+            "annualized": true
+          }
+        },
+        "efficiency": {
+          "cir": {
+            "current": 69.1,
+            "previous": 70.2
+          }
+        }
+      },
+      "summary": {
+        "strengths": [
+          "Рост общих активов на 4.88% по сравнению с концом предыдущего года (с 25572255 до 26821136 тыс. сом)",
+          "Увеличение чистой прибыли на 11.22% по сравнению с аналогичным периодом прошлого года (с 118563 до 131860 тыс. сом)",
+          "Высокий показатель мгновенной ликвидности (LCR) на уровне 254.1%."
+        ],
+        "attention_points": [
+          "Коэффициент CIR (Cost-to-Income Ratio) остается высоким на уровне 69.1%, что указывает на необходимость оптимизации расходов.",
+          "Незначительное снижение коэффициента левериджа с 12.1% до 11.9%."
+        ],
+        "conclusion": "Банк демонстрирует устойчивый рост активов и прибыльности. Поддержание высокой ликвидности и адекватности капитала создает надежную основу для дальнейшего развития. Важно обратить внимание на оптимизацию операционных расходов для улучшения эффективности."
+      },
+      "full_report": "Анализ финансового состояния ОАО «ФинансКредитБанк» по состоянию на 30 апреля 2025 года показывает следующее:\n\n1.  Ключевые показатели финансового положения (Баланс):\n    *   Общие активы увеличились на 4.88% по сравнению с концом 2024 года, достигнув 26 821 136 тыс. сом.\n    *   Средства клиентов выросли на 5.12% по сравнению с концом 2024 года, составив 18 274 417 тыс. сом.\n    *   Собственный капитал увеличился на 2.66% по сравнению с концом 2024 года, составив 5 133 229 тыс. сом.\n2.  Ключевые показатели финансовых результатов (Отчет о прибылях и убытках):\n    *   Чистая прибыль за период составила 131 860 тыс. сом, что на 11.22% больше, чем за аналогичный период прошлого года.\n    *   Чистый процентный доход составил 514 056 тыс. сом.\n    *   Чистый комиссионный доход составил 88 471 тыс. сом.\n3.  Финансовые коэффициенты:\n    *   Коэффициент мгновенной ликвидности (LCR) составил 254.1%.\n    *   Коэффициент отношения кредитов к депозитам составил 94.3%.\n    *   Коэффициент достаточности капитала (CAR) составил 20.2%.\n    *   Коэффициент рентабельности активов (ROA) составил 2.0% (годовых).\n    *   Коэффициент рентабельности капитала (ROE) составил 10.4% (годовых).\n    *   Коэффициент CIR (Cost-to-Income Ratio) составил 69.1%."
+    }
+  },
+  "comparative_analysis": {
+    "comparative_analysis": {
+      "period": "Апрель 2025",
+      "banks_compared": [
+        "ЗАО \"КИКБ\"",
+        "ОАО «Оптима Банк»",
+        "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+        "ОАО «ФинансКредитБанк»"
+      ],
+      "assets_comparison": {
+        "ranking": [
+          {
+            "bank": "ОАО «Оптима Банк»",
+            "value": 53377105,
+            "unit": "тыс. сом",
+            "share_of_largest": 100
+          },
+          {
+            "bank": "ЗАО \"КИКБ\"",
+            "value": 48821242,
+            "unit": "тыс. сом",
+            "share_of_largest": 91.46
+          },
+          {
+            "bank": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+            "value": 45189858,
+            "unit": "тыс. сом",
+            "share_of_largest": 84.66
+          },
+          {
+            "bank": "ОАО «ФинансКредитБанк»",
+            "value": 26821136,
+            "unit": "тыс. сом",
+            "share_of_largest": 50.25
+          }
+        ],
+        "growth_rates": [
+          {
+            "bank": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+            "growth_percent": 8.14,
+            "rank": 1
+          },
+          {
+            "bank": "ОАО «Оптима Банк»",
+            "growth_percent": 5.66,
+            "rank": 2
+          },
+          {
+            "bank": "ОАО «ФинансКредитБанк»",
+            "growth_percent": 4.88,
+            "rank": 3
+          },
+          {
+            "bank": "ЗАО \"КИКБ\"",
+            "growth_percent": 4.77,
+            "rank": 4
+          }
+        ]
+      },
+      "profitability_comparison": {
+        "net_profit": {
+          "ranking": [
+            {
+              "bank": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+              "value": 540169,
+              "unit": "тыс. сом",
+              "share_of_largest": 100
+            },
+            {
+              "bank": "ЗАО \"КИКБ\"",
+              "value": 244467,
+              "unit": "тыс. сом",
+              "share_of_largest": 45.26
+            },
+            {
+              "bank": "ОАО «Оптима Банк»",
+              "value": 219499,
+              "unit": "тыс. сом",
+              "share_of_largest": 40.64
+            },
+            {
+              "bank": "ОАО «ФинансКредитБанк»",
+              "value": 131860,
+              "unit": "тыс. сом",
+              "share_of_largest": 24.41
+            }
+          ]
+        },
+        "roa": {
+          "ranking": [
+            {
+              "bank": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+              "value": 5.01,
+              "rank": 1
+            },
+            {
+              "bank": "ЗАО \"КИКБ\"",
+              "value": 2.1,
+              "rank": 2
+            },
+            {
+              "bank": "ОАО «ФинансКредитБанк»",
+              "value": 2,
+              "rank": 3
+            },
+            {
+              "bank": "ОАО «Оптима Банк»",
+              "value": 0.43,
+              "rank": 4
+            }
+          ]
+        },
+        "roe": {
+          "ranking": [
+            {
+              "bank": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+              "value": 29.46,
+              "rank": 1
+            },
+            {
+              "bank": "ЗАО \"КИКБ\"",
+              "value": 13.6,
+              "rank": 2
+            },
+            {
+              "bank": "ОАО «ФинансКредитБанк»",
+              "value": 10.4,
+              "rank": 3
+            },
+            {
+              "bank": "ОАО «Оптима Банк»",
+              "value": 0.99,
+              "rank": 4
+            }
+          ]
+        }
+      },
+      "capital_adequacy_comparison": {
+        "car": {
+          "ranking": [
+            {
+              "bank": "ОАО «ФинансКредитБанк»",
+              "value": 20.2,
+              "rank": 1
+            },
+            {
+              "bank": "ЗАО \"КИКБ\"",
+              "value": 19.2,
+              "rank": 2
+            },
+            {
+              "bank": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+              "value": 18.66,
+              "rank": 3
+            },
+            {
+              "bank": "ОАО «Оптима Банк»",
+              "value": 18.36,
+              "rank": 4
+            }
+          ]
+        }
+      },
+      "liquidity_comparison": {
+        "loan_to_deposit": {
+          "ranking": [
+            {
+              "bank": "ЗАО \"КИКБ\"",
+              "value": 82.7,
+              "rank": 1,
+              "note": "Более низкое значение обычно означает более высокую ликвидность"
+            },
+            {
+              "bank": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+              "value": 89.55,
+              "rank": 2,
+              "note": "Более низкое значение обычно означает более высокую ликвидность"
+            },
+            {
+              "bank": "ОАО «ФинансКредитБанк»",
+              "value": 94.3,
+              "rank": 3,
+              "note": "Более низкое значение обычно означает более высокую ликвидность"
+            },
+            {
+              "bank": "ОАО «Оптима Банк»",
+              "value": 95.76,
+              "rank": 4,
+              "note": "Более низкое значение обычно означает более высокую ликвидность"
+            }
+          ]
+        }
+      },
+      "conclusions": {
+        "strongest_overall": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+        "fastest_growing": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+        "most_profitable": "ЗАО «Демир Кыргыз Интернэшнл Банк»",
+        "most_stable": "ОАО «ФинансКредитБанк»",
+        "insights": [
+          "ЗАО «Демир Кыргыз Интернэшнл Банк» демонстрирует наилучшие показатели рентабельности и роста, несмотря на меньший размер активов по сравнению с ОАО «Оптима Банк».",
+          "ОАО «ФинансКредитБанк» обладает самым высоким коэффициентом достаточности капитала (CAR), что указывает на его финансовую устойчивость.",
+          "ОАО «Оптима Банк» имеет наибольший объем активов, но демонстрирует более низкие показатели рентабельности, чем ЗАО «Демир Кыргыз Интернэшнл Банк»."
+        ]
+      }
+    }
+  }
+}
