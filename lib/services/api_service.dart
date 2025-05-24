@@ -27,7 +27,7 @@ class ApiService {
       final queryParameters = {
         'start_date': startDate,
         'report_type': 'monthly',
-        'lang': 'ky',
+        'lang':'ky'
       };
 
       if (selectedBankIds != null && selectedBankIds.isNotEmpty) {
@@ -92,7 +92,7 @@ class ApiService {
       final queryParameters = {
         'start_date': startDate,
         'report_type': 'monthly',
-        'lang': 'ky',
+        'lang':'ky'
       };
 
       if (selectedBankIds != null && selectedBankIds.isNotEmpty) {

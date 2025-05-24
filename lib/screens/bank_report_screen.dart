@@ -8,7 +8,7 @@ class BankReportScreen extends StatefulWidget {
   final Map<String, dynamic>? comparativeAnalysis;
 
   const BankReportScreen({
-    Key? key, 
+    Key? key,
     required this.reportResponse,
     this.comparativeAnalysis,
   }) : super(key: key);
@@ -17,53 +17,145 @@ class BankReportScreen extends StatefulWidget {
   State<BankReportScreen> createState() => _BankReportScreenState();
 }
 
-class _BankReportScreenState extends State<BankReportScreen> {
+class _BankReportScreenState extends State<BankReportScreen>
+    with TickerProviderStateMixin {
   late String selectedBank;
+  late AnimationController _animationController;
+  late AnimationController _cardAnimationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    if (widget.reportResponse.analyses.isEmpty) {
-      throw Exception('Нет данных для анализа');
-    }
     selectedBank = widget.reportResponse.analyses.keys.first;
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _cardAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 0.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+        parent: _animationController, curve: Curves.easeOutBack));
+
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(
+          parent: _cardAnimationController, curve: Curves.elasticOut),
+    );
+
+    _animationController.forward();
+    _cardAnimationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _cardAnimationController.dispose();
+    super.dispose();
   }
 
   void _onBankSelected(String bankKey) {
     setState(() {
       selectedBank = bankKey;
     });
+    _cardAnimationController.reset();
+    _cardAnimationController.forward();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Получаем comparative_analysis из общего ответа
-    final comparativeAnalysisData = widget.comparativeAnalysis?['comparative_analysis'];
-    
-    print('Полные данные: ${widget.comparativeAnalysis}');
-    print('Данные сравнительного анализа: $comparativeAnalysisData');
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Анализ банков'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      body: Column(
-        children: [
-          BankCarousel(
-            analyses: widget.reportResponse.analyses,
-            selectedBank: selectedBank,
-            onBankSelected: _onBankSelected,
+  Widget _buildGradientCard({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            Theme.of(context).colorScheme.secondary.withOpacity(0.03),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: child,
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon, {Color? color}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.1),
+            (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.05),
+          ],
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: (color ?? Theme.of(context).colorScheme.primary)
+                  .withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: (color ?? Theme.of(context).colorScheme.primary)
+                      .withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(
+              icon,
+              color: color ?? Theme.of(context).colorScheme.primary,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildBankAnalysis(widget.reportResponse.analyses[selectedBank]!),
-                  ComparativeAnalysisWidget(
-                    comparativeAnalysis: widget.comparativeAnalysis,
-                  ),
-                ],
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color ?? Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -73,58 +165,182 @@ class _BankReportScreenState extends State<BankReportScreen> {
   }
 
   Widget _buildBankAnalysis(BankAnalysis analysis) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              analysis.bankName,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: _buildGradientCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Красивый заголовок банка
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                    ],
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.account_balance,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            analysis.bankName,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            'Период: ${analysis.currentPeriod}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Text('Период: ${analysis.currentPeriod}'),
-            const SizedBox(height: 16),
 
-            // Баланс
-            if (analysis.balance.isNotEmpty) ...[
-              _buildSectionTitle('Баланс'),
-              _buildBalanceSection(analysis.balance),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Баланс
+                    if (analysis.balance.isNotEmpty) ...[
+                      _buildSectionHeader(
+                          'Баланс', Icons.account_balance_wallet,
+                          color: Colors.green),
+                      const SizedBox(height: 16),
+                      _buildBalanceSection(analysis.balance),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // Отчет о прибылях и убытках
+                    if (analysis.incomeStatement.isNotEmpty) ...[
+                      _buildSectionHeader(
+                          'Отчет о прибылях и убытках', Icons.trending_up,
+                          color: Colors.blue),
+                      const SizedBox(height: 16),
+                      _buildIncomeStatementSection(analysis.incomeStatement),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // Коэффициенты
+                    if (analysis.ratios.isNotEmpty) ...[
+                      _buildSectionHeader(
+                          'Финансовые коэффициенты', Icons.analytics,
+                          color: Colors.purple),
+                      const SizedBox(height: 16),
+                      _buildRatiosSection(analysis.ratios),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // Сильные стороны
+                    _buildSectionTitle('🌟 Сильные стороны'),
+                    ..._buildStrengths(analysis),
+                    const SizedBox(height: 16),
+
+                    // Точки внимания
+                    _buildSectionTitle('⚠️ Точки внимания'),
+                    ..._buildAttentionPoints(analysis),
+                    const SizedBox(height: 16),
+
+                    // Заключение
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.indigo.withOpacity(0.1),
+                            Colors.indigo.withOpacity(0.05),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.indigo.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.summarize,
+                                color: Colors.indigo.shade600,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                'Заключение',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.indigo.withOpacity(0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              analysis.summary['conclusion'] ?? 'Нет данных',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade700,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
-
-            // Отчет о прибылях и убытках
-            if (analysis.incomeStatement.isNotEmpty) ...[
-              _buildSectionTitle('Отчет о прибылях и убытках'),
-              _buildIncomeStatementSection(analysis.incomeStatement),
-              const SizedBox(height: 16),
-            ],
-
-            // Коэффициенты
-            if (analysis.ratios.isNotEmpty) ...[
-              _buildSectionTitle('Финансовые коэффициенты'),
-              _buildRatiosSection(analysis.ratios),
-              const SizedBox(height: 16),
-            ],
-
-            // Сильные стороны
-            _buildSectionTitle('Сильные стороны'),
-            ..._buildStrengths(analysis),
-            const SizedBox(height: 16),
-
-            // Точки внимания
-            _buildSectionTitle('Точки внимания'),
-            ..._buildAttentionPoints(analysis),
-            const SizedBox(height: 16),
-
-            // Заключение
-            _buildSectionTitle('Заключение'),
-            Text(analysis.summary['conclusion'] ?? 'Нет данных'),
-          ],
+          ),
         ),
       ),
     );
@@ -136,103 +352,68 @@ class _BankReportScreenState extends State<BankReportScreen> {
     final equity = balance['equity'];
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (assets != null) ...[
-          _buildSubsectionTitle('Активы'),
-          _buildMetricRow(
+        // Активы
+        if (assets != null)
+          _buildBalanceRow(
+            '💰',
             'Всего активов',
             '${assets['total']?['current'] ?? 0} тыс. сом',
+            'Изм: ${assets['total']?['change_since_year_end_percent'] ?? 0}%',
+            Colors.green,
           ),
-          _buildMetricRow(
-            'Изменение с начала года',
-            '${assets['total']?['change_since_year_end_percent'] ?? 0}%',
-          ),
-          if (assets['components'] != null) ...[
-            const SizedBox(height: 8),
-            Text('Структура активов:', style: TextStyle(fontWeight: FontWeight.w500)),
-            ...(assets['components'] as List).map((component) => 
-              _buildMetricRow(
-                component['name'] ?? '',
-                '${component['current'] ?? 0} тыс. сом (${component['share_in_total'] ?? 0}%)',
-              )
-            ),
-          ],
-        ],
 
-        if (liabilities != null) ...[
-          const SizedBox(height: 12),
-          _buildSubsectionTitle('Обязательства'),
-          _buildMetricRow(
+        // Обязательства
+        if (liabilities != null)
+          _buildBalanceRow(
+            '💳',
             'Всего обязательств',
             '${liabilities['total']?['current'] ?? 0} тыс. сом',
+            'Изм: ${liabilities['total']?['change_since_year_end_percent'] ?? 0}%',
+            Colors.orange,
           ),
-          _buildMetricRow(
-            'Изменение с начала года',
-            '${liabilities['total']?['change_since_year_end_percent'] ?? 0}%',
-          ),
-          if (liabilities['components'] != null) ...[
-            const SizedBox(height: 8),
-            Text('Структура обязательств:', style: TextStyle(fontWeight: FontWeight.w500)),
-            ...(liabilities['components'] as List).map((component) => 
-              _buildMetricRow(
-                component['name'] ?? '',
-                '${component['current'] ?? 0} тыс. сом (${component['share_in_total'] ?? 0}%)',
-              )
-            ),
-          ],
-        ],
 
-        if (equity != null) ...[
-          const SizedBox(height: 12),
-          _buildSubsectionTitle('Капитал'),
-          _buildMetricRow(
+        // Капитал
+        if (equity != null)
+          _buildBalanceRow(
+            '🏛️',
             'Всего капитал',
             '${equity['total']?['current'] ?? 0} тыс. сом',
+            'Изм: ${equity['total']?['change_since_year_end_percent'] ?? 0}%',
+            Colors.purple,
           ),
-          _buildMetricRow(
-            'Изменение с начала года',
-            '${equity['total']?['change_since_year_end_percent'] ?? 0}%',
-          ),
-          if (equity['components'] != null) ...[
-            const SizedBox(height: 8),
-            Text('Структура капитала:', style: TextStyle(fontWeight: FontWeight.w500)),
-            ...(equity['components'] as List).map((component) => 
-              _buildMetricRow(
-                component['name'] ?? '',
-                '${component['current'] ?? 0} тыс. сом (${component['share_in_total'] ?? 0}%)',
-              )
-            ),
-          ],
-        ],
       ],
     );
   }
 
   Widget _buildIncomeStatementSection(Map<String, dynamic> incomeStatement) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (incomeStatement['net_profit'] != null) ...[
-          _buildMetricRow(
+        if (incomeStatement['net_profit'] != null)
+          _buildBalanceRow(
+            '📈',
             'Чистая прибыль',
             '${incomeStatement['net_profit']['current']} тыс. сом',
+            incomeStatement['net_profit']['change_percent'] != null
+                ? 'Изм: ${incomeStatement['net_profit']['change_percent']}%'
+                : null,
+            Colors.green,
           ),
-          if (incomeStatement['net_profit']['change_percent'] != null)
-            _buildMetricRow(
-              'Изменение к прошлому году',
-              '${incomeStatement['net_profit']['change_percent']}%',
-            ),
-        ],
         if (incomeStatement['net_interest_income'] != null)
-          _buildMetricRow(
+          _buildBalanceRow(
+            '💹',
             'Чистый процентный доход',
             '${incomeStatement['net_interest_income']['current']} тыс. сом',
+            null,
+            Colors.blue,
           ),
         if (incomeStatement['net_fee_income'] != null)
-          _buildMetricRow(
+          _buildBalanceRow(
+            '💰',
             'Чистый комиссионный доход',
             '${incomeStatement['net_fee_income']['current']} тыс. сом',
+            null,
+            Colors.teal,
           ),
       ],
     );
@@ -240,79 +421,134 @@ class _BankReportScreenState extends State<BankReportScreen> {
 
   Widget _buildRatiosSection(Map<String, dynamic> ratios) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Достаточность капитала
-        if (ratios['capital_adequacy'] != null) ...[
-          _buildSubsectionTitle('Достаточность капитала'),
-          if (ratios['capital_adequacy']['car'] != null)
-            _buildMetricRow(
-              'CAR',
-              '${ratios['capital_adequacy']['car']['current']}% (мин. ${ratios['capital_adequacy']['car']['regulatory_minimum']}%)',
-            ),
-          if (ratios['capital_adequacy']['tier1'] != null)
-            _buildMetricRow(
-              'Tier 1',
-              '${ratios['capital_adequacy']['tier1']['current']}% (мин. ${ratios['capital_adequacy']['tier1']['regulatory_minimum']}%)',
-            ),
-        ],
-
-        // Ликвидность
-        if (ratios['liquidity'] != null) ...[
-          const SizedBox(height: 12),
-          _buildSubsectionTitle('Ликвидность'),
-          if (ratios['liquidity']['lcr'] != null)
-            _buildMetricRow(
-              'LCR',
-              '${ratios['liquidity']['lcr']['current']}% (мин. ${ratios['liquidity']['lcr']['regulatory_minimum']}%)',
-            ),
-          if (ratios['liquidity']['loan_to_deposit'] != null)
-            _buildMetricRow(
-              'Кредиты/Депозиты',
-              '${ratios['liquidity']['loan_to_deposit']['current']}%',
-            ),
-        ],
-
-        // Рентабельность
-        if (ratios['profitability'] != null) ...[
-          const SizedBox(height: 12),
-          _buildSubsectionTitle('Рентабельность'),
-          if (ratios['profitability']['roa'] != null)
-            _buildMetricRow(
-              'ROA',
-              '${ratios['profitability']['roa']['current']}%',
-            ),
-          if (ratios['profitability']['roe'] != null)
-            _buildMetricRow(
-              'ROE',
-              '${ratios['profitability']['roe']['current']}%',
-            ),
-        ],
-
-        // Эффективность
-        if (ratios['efficiency'] != null) ...[
-          const SizedBox(height: 12),
-          _buildSubsectionTitle('Эффективность'),
-          if (ratios['efficiency']['cir'] != null)
-            _buildMetricRow(
-              'CIR',
-              '${ratios['efficiency']['cir']['current']}%',
-            ),
-        ],
+        if (ratios['capital_adequacy']?['car'] != null)
+          _buildBalanceRow(
+            '🛡️',
+            'CAR',
+            '${ratios['capital_adequacy']['car']['current']}%',
+            'мин. ${ratios['capital_adequacy']['car']['regulatory_minimum']}%',
+            (ratios['capital_adequacy']['car']['current'] ?? 0) >=
+                    (ratios['capital_adequacy']['car']['regulatory_minimum'] ??
+                        0)
+                ? Colors.green
+                : Colors.red,
+          ),
+        if (ratios['liquidity']?['lcr'] != null)
+          _buildBalanceRow(
+            '💧',
+            'LCR',
+            '${ratios['liquidity']['lcr']['current']}%',
+            'мин. ${ratios['liquidity']['lcr']['regulatory_minimum']}%',
+            (ratios['liquidity']['lcr']['current'] ?? 0) >=
+                    (ratios['liquidity']['lcr']['regulatory_minimum'] ?? 0)
+                ? Colors.green
+                : Colors.red,
+          ),
+        if (ratios['profitability']?['roa'] != null)
+          _buildBalanceRow(
+            '📊',
+            'ROA',
+            '${ratios['profitability']['roa']['current']}%',
+            'Рентабельность активов',
+            Colors.green,
+          ),
+        if (ratios['profitability']?['roe'] != null)
+          _buildBalanceRow(
+            '📈',
+            'ROE',
+            '${ratios['profitability']['roe']['current']}%',
+            'Рентабельность капитала',
+            Colors.green,
+          ),
+        if (ratios['efficiency']?['cir'] != null)
+          _buildBalanceRow(
+            '⚡',
+            'CIR',
+            '${ratios['efficiency']['cir']['current']}%',
+            'Cost-to-Income Ratio',
+            Colors.amber,
+          ),
       ],
     );
   }
 
-  Widget _buildSubsectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Colors.blue,
+  Widget _buildBalanceRow(
+      String icon, String title, String value, String? subtitle, Color color) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            color.withOpacity(0.1),
+            Colors.white,
+          ],
         ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                icon,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                if (subtitle != null)
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: color,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -331,47 +567,169 @@ class _BankReportScreenState extends State<BankReportScreen> {
   }
 
   List<Widget> _buildStrengths(BankAnalysis analysis) {
-    List<String> strengths = List<String>.from(analysis.summary['strengths'] ?? []);
-    return strengths.map((strength) => 
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('• ', style: TextStyle(fontSize: 16)),
-            Expanded(child: Text(strength)),
-          ],
-        ),
-      )
-    ).toList();
+    List<String> strengths =
+        List<String>.from(analysis.summary['strengths'] ?? []);
+    return strengths
+        .map((strength) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.check_circle,
+                      color: Colors.green.shade600, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(strength)),
+                ],
+              ),
+            ))
+        .toList();
   }
 
   List<Widget> _buildAttentionPoints(BankAnalysis analysis) {
-    List<String> points = List<String>.from(analysis.summary['attention_points'] ?? []);
-    return points.map((point) => 
-      Padding(
-        padding: const EdgeInsets.only(bottom: 4.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('• ', style: TextStyle(fontSize: 16, color: Colors.orange)),
-            Expanded(child: Text(point)),
-          ],
-        ),
-      )
-    ).toList();
+    List<String> points =
+        List<String>.from(analysis.summary['attention_points'] ?? []);
+    return points
+        .map((point) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.shade200),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.warning, color: Colors.orange.shade600, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(point)),
+                ],
+              ),
+            ))
+        .toList();
   }
 
-  Widget _buildMetricRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-        ],
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              Colors.white,
+              Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            // Крутой AppBar
+            Container(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 8,
+                left: 16,
+                right: 16,
+                bottom: 8,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withOpacity(0.9),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.analytics,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Анализ банков',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Карусель банков
+            SlideTransition(
+              position: _slideAnimation,
+              child: BankCarousel(
+                analyses: widget.reportResponse.analyses,
+                selectedBank: selectedBank,
+                onBankSelected: _onBankSelected,
+              ),
+            ),
+
+            // Основной контент
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildBankAnalysis(
+                        widget.reportResponse.analyses[selectedBank]!),
+                    SlideTransition(
+                      position: _slideAnimation,
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: ComparativeAnalysisWidget(
+                          comparativeAnalysis: widget.comparativeAnalysis,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-} 
+}

@@ -52,25 +52,96 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          _selectedIndex == 0 ? 'Анализ банков КР' : 'Отчеты банков',
-          style: const TextStyle(color: Colors.white),
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.primary.withOpacity(0.9),
+              ],
+            ),
+          ),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.analytics,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              _selectedIndex == 0 ? 'Анализ банков КР' : 'Отчеты банков',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Анализ',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.primary.withOpacity(0.05),
+              Colors.white,
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.picture_as_pdf),
-            label: 'Отчеты',
+        ),
+        child: _screens[_selectedIndex],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white,
+              Colors.grey.shade50,
+            ],
           ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          selectedItemColor: Theme.of(context).colorScheme.primary,
+          unselectedItemColor: Colors.grey.shade500,
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.analytics),
+              activeIcon: Icon(Icons.analytics, size: 28),
+              label: 'Анализ',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.picture_as_pdf),
+              activeIcon: Icon(Icons.picture_as_pdf, size: 28),
+              label: 'Отчеты',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
@@ -93,9 +164,9 @@ class _HomePageState extends State<HomePage> {
   List<XFile>? _selectedFiles;
   Set<int> _selectedBankIds = {};
 
-  final List<int> _years = List.generate(DateTime.now().year - 2010 + 1, 
-    (index) => 2010 + index);
-  
+  final List<int> _years =
+      List.generate(DateTime.now().year - 2010 + 1, (index) => 2010 + index);
+
   final Map<int, String> _months = {
     1: 'Январь',
     2: 'Февраль',
@@ -123,12 +194,13 @@ class _HomePageState extends State<HomePage> {
     try {
       String formattedMonth = _selectedMonth!.toString().padLeft(2, '0');
       String formattedDate = '${_selectedYear}-$formattedMonth-01';
-      
+
       final data = await _apiService.fetchBankReport(
         startDate: formattedDate,
-        selectedBankIds: _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
+        selectedBankIds:
+            _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
       );
-      
+
       if (mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -166,7 +238,7 @@ class _HomePageState extends State<HomePage> {
       final files = await openFiles(
         acceptedTypeGroups: [typeGroup],
       );
-      
+
       if (files.isNotEmpty) {
         setState(() {
           _selectedFiles = files;
@@ -307,8 +379,8 @@ class _HomePageState extends State<HomePage> {
               )
             : SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (_isError) ...[
                       const Icon(
@@ -317,7 +389,7 @@ class _HomePageState extends State<HomePage> {
                         size: 60,
                       ),
                       const SizedBox(height: 16),
-            Text(
+                      Text(
                         'Произошла ошибка:\n$_errorMessage',
                         textAlign: TextAlign.center,
                         style: const TextStyle(color: Colors.red),
@@ -326,7 +398,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                     const Text(
                       'Выберите период для анализа',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -350,7 +423,7 @@ class _HomePageState extends State<HomePage> {
                                 _selectedYear = value;
                               });
                             },
-      ),
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -395,7 +468,8 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 16),
                     const Text(
                       'Загрузка своих отчетов',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
@@ -409,7 +483,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    if (_selectedFiles != null && _selectedFiles!.isNotEmpty) ...[
+                    if (_selectedFiles != null &&
+                        _selectedFiles!.isNotEmpty) ...[
                       const SizedBox(height: 16),
                       Text(
                         'Выбранные файлы (${_selectedFiles!.length}):',
@@ -430,11 +505,9 @@ class _HomePageState extends State<HomePage> {
                               subtitle: FutureBuilder<int>(
                                 future: file.length(),
                                 builder: (context, snapshot) {
-                                  return Text(
-                                    snapshot.hasData
-                                        ? '${(snapshot.data! / 1024).toStringAsFixed(2)} KB'
-                                        : 'Вычисление размера...'
-                                  );
+                                  return Text(snapshot.hasData
+                                      ? '${(snapshot.data! / 1024).toStringAsFixed(2)} KB'
+                                      : 'Вычисление размера...');
                                 },
                               ),
                               trailing: IconButton(
@@ -456,7 +529,8 @@ class _HomePageState extends State<HomePage> {
                             horizontal: 24,
                             vertical: 12,
                           ),
-                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           foregroundColor: Colors.white,
                         ),
                       ),
