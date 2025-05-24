@@ -3,6 +3,8 @@ import 'models/bank_report.dart';
 import 'screens/bank_report_screen.dart';
 import 'services/api_service.dart';
 import 'package:file_selector/file_selector.dart';
+import 'screens/pdf_reports_screen.dart';
+import 'screens/analysis_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +21,57 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _screens = [
+    const AnalysisScreen(),
+    const PdfReportsScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
+          _selectedIndex == 0 ? 'Анализ банков КР' : 'Отчеты банков',
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.analytics),
+            label: 'Анализ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.picture_as_pdf),
+            label: 'Отчеты',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
@@ -106,8 +158,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> _pickFiles() async {
     try {
       final typeGroup = XTypeGroup(
-        label: 'Поддерживаемые форматы',
-        extensions: ['json', 'xlsx', 'xls', 'csv'],
+        label: 'PDF файлы',
+        extensions: ['pdf'],
+        mimeTypes: ['application/pdf'],
       );
 
       final files = await openFiles(
@@ -118,15 +171,6 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _selectedFiles = files;
         });
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Выбрано файлов: ${files.length}'),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
       }
     } catch (e) {
       if (mounted) {
@@ -136,6 +180,58 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Colors.red,
           ),
         );
+      }
+    }
+  }
+
+  void _removeFile(int index) {
+    setState(() {
+      final newList = List<XFile>.from(_selectedFiles ?? []);
+      newList.removeAt(index);
+      _selectedFiles = newList.isEmpty ? null : newList;
+    });
+  }
+
+  Future<void> _uploadFiles() async {
+    if (_selectedFiles == null || _selectedFiles!.isEmpty) return;
+
+    try {
+      setState(() {
+        _isLoading = true;
+        _isError = false;
+        _errorMessage = '';
+      });
+
+      final result = await _apiService.analyzePdfFiles(_selectedFiles!);
+
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => BankReportScreen(
+              reportResponse: BankReportResponse.fromJson(result),
+              comparativeAnalysis: result,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isError = true;
+          _errorMessage = e.toString();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка при отправке файлов: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -286,7 +382,7 @@ class _HomePageState extends State<HomePage> {
                       ElevatedButton.icon(
                         onPressed: _loadData,
                         icon: const Icon(Icons.download),
-                        label: const Text('Получить отчет'),
+                        label: const Text('Получить анализ'),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
@@ -321,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 8),
                       Container(
-                        constraints: const BoxConstraints(maxHeight: 100),
+                        constraints: const BoxConstraints(maxHeight: 200),
                         child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: _selectedFiles!.length,
@@ -329,7 +425,7 @@ class _HomePageState extends State<HomePage> {
                             final file = _selectedFiles![index];
                             return ListTile(
                               dense: true,
-                              leading: const Icon(Icons.file_present),
+                              leading: const Icon(Icons.picture_as_pdf),
                               title: Text(file.name),
                               subtitle: FutureBuilder<int>(
                                 future: file.length(),
@@ -341,8 +437,27 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                               ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => _removeFile(index),
+                                tooltip: 'Удалить файл',
+                              ),
                             );
                           },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: _uploadFiles,
+                        icon: const Icon(Icons.send),
+                        label: const Text('Получить анализ'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Colors.white,
                         ),
                       ),
                     ],

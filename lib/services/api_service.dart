@@ -2,28 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'platform_helper.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:file_selector/file_selector.dart';
+import '../models/bank_report_pdf.dart';
+import 'api_service_mobile.dart' if (dart.library.html) 'api_service_web.dart';
 
 class ApiService {
-  // Используем IP вашего компьютера в локальной сети для реальных устройств
-  static const String _localNetworkUrl = 'http://192.168.98.60:8000';
-  static const String _emulatorUrl = 'http://10.0.2.2:8000';
-  static const String _webUrl = 'http://localhost:8000';
-
-  static String get baseUrl {
-    if (PlatformHelper.isWeb) {
-      print('Используется веб-платформа');
-      return _webUrl;
-    }
-    
-    if (PlatformHelper.isEmulator) {
-      print('Используется Android эмулятор');
-      return _emulatorUrl;
-    }
-    
-    print('Используется реальное устройство');
-    return _localNetworkUrl;
-  }
+  // Используем только локальную сеть для всех платформ
+  static const String baseUrl = 'http://192.168.98.60:8000';
 
   static const Map<String, int> bankIds = {
     'KICB': 1,
@@ -53,22 +39,85 @@ class ApiService {
       );
 
       print('Отправка запроса на: $uri');
-      print('Используемый baseUrl: ${baseUrl}');
 
       final response = await http.get(uri);
 
       print('Получен ответ со статусом: ${response.statusCode}');
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        print('Структура ответа: ${jsonResponse.keys}');
-        print('Содержимое comparative_analysis: ${jsonResponse['comparative_analysis']}');
-        
-        // Проверяем структуру данных
-        if (jsonResponse['comparative_analysis'] == null) {
-          print('Внимание: comparative_analysis отсутствует в ответе');
-        }
-        
         return jsonResponse;
+      } else {
+        print('Тело ответа с ошибкой: ${response.body}');
+        throw Exception('Ошибка загрузки данных: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Произошла ошибка: $e');
+      throw Exception('Ошибка сети: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> analyzePdfFiles(List<XFile> files) async {
+    try {
+      final uri = Uri.parse('$baseUrl/analyze_by_pdf');
+      var request = http.MultipartRequest('POST', uri);
+      
+      for (var file in files) {
+        final multipartFile = await PlatformService.createMultipartFile(file);
+        request.files.add(multipartFile);
+      }
+
+      print('Отправка PDF файлов на: ${uri}');
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      print('Получен ответ со статусом: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        return json.decode(responseBody);
+      } else {
+        print('Тело ответа с ошибкой: $responseBody');
+        throw Exception('Ошибка загрузки данных: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Произошла ошибка при отправке PDF: $e');
+      throw Exception('Ошибка при отправке PDF: $e');
+    }
+  }
+
+  Future<List<BankReportPdf>> fetchBankPdfReports({
+    required String startDate,
+    List<int>? selectedBankIds,
+  }) async {
+    try {
+      final queryParameters = {
+        'start_date': startDate,
+        'report_type': 'monthly',
+      };
+
+      if (selectedBankIds != null && selectedBankIds.isNotEmpty) {
+        queryParameters['bank_ids'] = selectedBankIds.join(',');
+      }
+
+      final uri = Uri.parse(baseUrl).replace(
+        path: '/reports',
+        queryParameters: queryParameters,
+      );
+
+      print('Отправка запроса на: $uri');
+
+      final response = await http.get(uri);
+
+      print('Получен ответ со статусом: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonResponse = json.decode(response.body);
+        final reports = jsonResponse.map((json) => BankReportPdf.fromJson(json)).toList();
+        
+        // Фильтруем отчеты Optima Bank, оставляя только те, что опубликованы 1-го числа
+        return reports.where((report) {
+          if (report.bankName.contains('Optima')) {
+            return report.reportTitle.contains('(published 01.');
+          }
+          return true;
+        }).toList();
       } else {
         print('Тело ответа с ошибкой: ${response.body}');
         throw Exception('Ошибка загрузки данных: ${response.statusCode}');
