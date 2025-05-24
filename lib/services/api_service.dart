@@ -9,7 +9,7 @@ import 'api_service_mobile.dart' if (dart.library.html) 'api_service_web.dart';
 
 class ApiService {
   // Используем только локальную сеть для всех платформ
-  static const String baseUrl = 'http://192.168.98.60:8000';
+  static const String baseUrl = 'http://192.168.169.60:8000';
 
   static const Map<String, int> bankIds = {
     'KICB': 1,
@@ -27,10 +27,11 @@ class ApiService {
       final queryParameters = {
         'start_date': startDate,
         'report_type': 'monthly',
+        'lang': 'ky',
       };
 
       if (selectedBankIds != null && selectedBankIds.isNotEmpty) {
-        queryParameters['bank_id'] = selectedBankIds.join(',');
+        queryParameters['bank_ids'] = selectedBankIds.join(',');
       }
 
       final uri = Uri.parse(baseUrl).replace(
@@ -91,6 +92,7 @@ class ApiService {
       final queryParameters = {
         'start_date': startDate,
         'report_type': 'monthly',
+        'lang': 'ky',
       };
 
       if (selectedBankIds != null && selectedBankIds.isNotEmpty) {

@@ -23,6 +23,9 @@ class _BankReportScreenState extends State<BankReportScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.reportResponse.analyses.isEmpty) {
+      throw Exception('Нет данных для анализа');
+    }
     selectedBank = widget.reportResponse.analyses.keys.first;
   }
 

@@ -7,6 +7,7 @@ import '../models/bank_report_pdf.dart';
 import '../services/api_service.dart';
 import 'bank_report_screen.dart';
 import '../models/bank_report.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PdfReportsScreen extends StatefulWidget {
   const PdfReportsScreen({super.key});
@@ -88,62 +89,18 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
   }
 
   Future<void> _downloadReport(BankReportPdf report) async {
-    if (_downloadedReportUrls.contains(report.reportUrl)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Этот отчет уже скачан'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
     try {
-      final client = http.Client();
-      final request = http.Request('GET', Uri.parse(report.reportUrl))
-        ..followRedirects = true;
-      
-      final response = await client.send(request);
-      
-      if (response.statusCode == 200) {
-        final bytes = await response.stream.toBytes();
-        final tempDir = await getTemporaryDirectory();
-        final file = File('${tempDir.path}/${report.bankName}_${report.reportDate.toString()}.pdf');
-        await file.writeAsBytes(bytes);
-        
-        setState(() {
-          _downloadedFiles.add(XFile(file.path));
-          _downloadedReportUrls.add(report.reportUrl);
-        });
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Отчет успешно скачан'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } else {
-        throw Exception('Ошибка скачивания: ${response.statusCode}');
-      }
+      final url = Uri.parse(report.reportUrl);
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при скачивании: $e'),
+            content: Text('Ошибка при открытии отчета: $e'),
             backgroundColor: Colors.red,
           ),
         );
       }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -165,41 +122,26 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
         _errorMessage = '';
       });
 
-      // Скачиваем все отчеты во временные файлы
-      List<XFile> tempFiles = [];
-      for (var report in _reports!) {
-        final client = http.Client();
-        final request = http.Request('GET', Uri.parse(report.reportUrl))
-          ..followRedirects = true;
-        
-        final response = await client.send(request);
-        
-        if (response.statusCode == 200) {
-          final bytes = await response.stream.toBytes();
-          final tempDir = await getTemporaryDirectory();
-          final file = File('${tempDir.path}/${report.bankName}_${report.reportDate.toString()}.pdf');
-          await file.writeAsBytes(bytes);
-          tempFiles.add(XFile(file.path));
-        }
-      }
+      // Получаем дату из первого отчета
+      final firstReport = _reports!.first;
+      final reportDate = firstReport.reportDate;
+      String formattedDate = '${reportDate.year}-${reportDate.month.toString().padLeft(2, '0')}-${reportDate.day.toString().padLeft(2, '0')}';
 
-      // Отправляем файлы на анализ
-      final result = await _apiService.analyzePdfFiles(tempFiles);
-
-      // Удаляем временные файлы
-      for (var file in tempFiles) {
-        try {
-          await File(file.path).delete();
-        } catch (e) {
-          print('Ошибка при удалении временного файла: $e');
-        }
-      }
+      // Получаем результаты анализа
+      final result = await _apiService.fetchBankReport(
+        startDate: formattedDate,
+        selectedBankIds: _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
+      );
 
       if (mounted) {
+        final reportResponse = BankReportResponse.fromJson(result);
+        if (reportResponse.analyses.isEmpty) {
+          throw Exception('Сервер не вернул данные анализа');
+        }
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => BankReportScreen(
-              reportResponse: BankReportResponse.fromJson(result),
+              reportResponse: reportResponse,
               comparativeAnalysis: result,
             ),
           ),
@@ -213,7 +155,7 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при анализе файлов: $e'),
+            content: Text('Ошибка при анализе отчетов: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -399,19 +341,15 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
               itemCount: _reports!.length,
               itemBuilder: (context, index) {
                 final report = _reports![index];
-                final isDownloaded = _downloadedReportUrls.contains(report.reportUrl);
                 return Card(
                   child: ListTile(
                     leading: const Icon(Icons.picture_as_pdf),
                     title: Text(report.bankName),
                     subtitle: Text(report.reportTitle),
                     trailing: IconButton(
-                      icon: Icon(
-                        isDownloaded ? Icons.check_circle : Icons.download,
-                        color: isDownloaded ? Colors.green : null,
-                      ),
-                      onPressed: isDownloaded ? null : () => _downloadReport(report),
-                      tooltip: isDownloaded ? 'Скачано' : 'Скачать отчет',
+                      icon: const Icon(Icons.open_in_new),
+                      onPressed: () => _downloadReport(report),
+                      tooltip: 'Открыть отчет',
                     ),
                   ),
                 );

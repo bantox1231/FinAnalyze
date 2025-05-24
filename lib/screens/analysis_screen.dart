@@ -3,6 +3,8 @@ import '../services/api_service.dart';
 import '../models/bank_report.dart';
 import 'package:file_selector/file_selector.dart';
 
+import 'bank_report_screen.dart';
+
 class AnalysisScreen extends StatefulWidget {
   const AnalysisScreen({super.key});
 
@@ -61,10 +63,18 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
       );
       
       if (mounted) {
-        setState(() {
-          _reportResponse = BankReportResponse.fromJson(response);
-          _comparativeAnalysis = response;
-        });
+        final reportResponse = BankReportResponse.fromJson(response);
+        if (reportResponse.analyses.isEmpty) {
+          throw Exception('Сервер не вернул данные анализа');
+        }
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => BankReportScreen(
+              reportResponse: reportResponse,
+              comparativeAnalysis: response,
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -72,6 +82,12 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
           _isError = true;
           _errorMessage = e.toString();
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка при загрузке отчета: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) {
