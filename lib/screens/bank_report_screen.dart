@@ -476,8 +476,8 @@ class _BankReportScreenState extends State<BankReportScreen>
   Widget _buildBalanceRow(
       String icon, String title, String value, String? subtitle, Color color) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16), // Уменьшен padding
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
@@ -487,29 +487,36 @@ class _BankReportScreenState extends State<BankReportScreen>
             Colors.white,
           ],
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12), // Немного уменьшен радиус
         border: Border.all(
           color: color.withOpacity(0.2),
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 34, // Уменьшен размер
+            height: 34, // Уменьшен размер
             decoration: BoxDecoration(
               color: color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(8), // Уменьшен радиус
             ),
             child: Center(
               child: Text(
                 icon,
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16), // Уменьшен размер шрифта
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 16), // Уменьшен отступ
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -518,34 +525,107 @@ class _BankReportScreenState extends State<BankReportScreen>
                   title,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 15, // Немного уменьшен размер шрифта
                     color: Colors.grey.shade800,
                   ),
                 ),
-                if (subtitle != null)
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 4), // Уменьшен отступ
+                  _buildPercentageBadge(subtitle, color),
+                ],
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Уменьшены отступы
             decoration: BoxDecoration(
               color: color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16), // Уменьшен радиус
             ),
             child: Text(
               value,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: color,
-                fontSize: 14,
+                fontSize: 16, // Немного уменьшен шрифт
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPercentageBadge(String text, Color mainColor) {
+    // Извлекаем процент из текста
+    final percentMatch = RegExp(r'([-+]?\d+(?:\.\d+)?%)').firstMatch(text);
+    if (percentMatch == null) {
+      return Text(
+        text,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: Colors.grey.shade700,
+        ),
+      );
+    }
+
+    final percentValue = percentMatch.group(1)!;
+    final isPositive = !percentValue.startsWith('-');
+
+    // СУПЕР ЯРКИЕ КОНТРАСТНЫЕ ЦВЕТА
+    final bgColor = isPositive ? Colors.green.shade600 : Colors.red.shade600;
+    final shadowColor =
+        isPositive ? Colors.green.shade700 : Colors.red.shade700;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Уменьшены отступы
+      decoration: BoxDecoration(
+        // ЯРКИЙ СПЛОШНОЙ ФОН
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16), // Уменьшен радиус
+        // МОЩНАЯ ТЕНЬ
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor.withOpacity(0.6),
+            blurRadius: 10, // Уменьшена тень
+            offset: const Offset(0, 3), // Уменьшено смещение тени
+          ),
+          BoxShadow(
+            color: shadowColor.withOpacity(0.3),
+            blurRadius: 16, // Уменьшена тень
+            offset: const Offset(0, 6), // Уменьшено смещение тени
+          ),
+        ],
+        // КОНТРАСТНАЯ РАМКА
+        border: Border.all(
+          color: shadowColor,
+          width: 1.5, // Уменьшена ширина рамки
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isPositive ? Icons.trending_up : Icons.trending_down,
+            size: 16, // Немного уменьшен размер иконки
+            color: Colors.white,
+          ),
+          const SizedBox(width: 5), // Уменьшено расстояние
+          Text(
+            percentValue,
+            style: const TextStyle(
+              fontSize: 14, // Размер текста оставлен прежним
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: 0.8,
+              shadows: [
+                Shadow(
+                  color: Colors.black26,
+                  offset: Offset(1, 1),
+                  blurRadius: 2,
+                ),
+              ],
             ),
           ),
         ],
