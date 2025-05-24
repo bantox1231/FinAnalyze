@@ -6,6 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:file_selector/file_selector.dart';
 import '../models/bank_report_pdf.dart';
 import 'api_service_mobile.dart' if (dart.library.html) 'api_service_web.dart';
+import 'locale_service.dart';
 
 class ApiService {
   // Используем только локальную сеть для всех платформ
@@ -19,6 +20,12 @@ class ApiService {
     'RSK': 5,
   };
 
+  // Получаем текущий язык для API запросов
+  String _getCurrentLanguageCode() {
+    final locale = LocaleService.instance.locale;
+    return locale.languageCode == 'ky' ? 'ky' : 'ru';
+  }
+
   Future<Map<String, dynamic>> fetchBankReport({
     required String startDate,
     List<int>? selectedBankIds,
@@ -27,7 +34,7 @@ class ApiService {
       final queryParameters = {
         'start_date': startDate,
         'report_type': 'monthly',
-        'lang':'ky'
+        'lang': _getCurrentLanguageCode() // Используем текущий язык
       };
 
       if (selectedBankIds != null && selectedBankIds.isNotEmpty) {
@@ -92,7 +99,7 @@ class ApiService {
       final queryParameters = {
         'start_date': startDate,
         'report_type': 'monthly',
-        'lang':'ky'
+        'lang': _getCurrentLanguageCode() // Используем текущий язык
       };
 
       if (selectedBankIds != null && selectedBankIds.isNotEmpty) {

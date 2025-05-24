@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_selector/file_selector.dart';
 import 'package:path_provider/path_provider.dart';
@@ -31,19 +32,19 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
   final List<int> _years = List.generate(DateTime.now().year - 2010 + 1,
           (index) => 2010 + index);
 
-  final Map<int, String> _months = {
-    1: 'Январь',
-    2: 'Февраль',
-    3: 'Март',
-    4: 'Апрель',
-    5: 'Май',
-    6: 'Июнь',
-    7: 'Июль',
-    8: 'Август',
-    9: 'Сентябрь',
-    10: 'Октябрь',
-    11: 'Ноябрь',
-    12: 'Декабрь',
+  Map<int, String> _getMonths(AppLocalizations l10n) => {
+    1: l10n.january,
+    2: l10n.february,
+    3: l10n.march,
+    4: l10n.april,
+    5: l10n.may,
+    6: l10n.june,
+    7: l10n.july,
+    8: l10n.august,
+    9: l10n.september,
+    10: l10n.october,
+    11: l10n.november,
+    12: l10n.december,
   };
 
   Future<void> _loadReports() async {
@@ -89,6 +90,7 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
   }
 
   Future<void> _downloadReport(BankReportPdf report) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final url = Uri.parse(report.reportUrl);
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -96,7 +98,7 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при открытии отчета: $e'),
+            content: Text('${l10n.errorOpeningReport} $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -105,10 +107,11 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
   }
 
   Future<void> _analyzeReports() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_reports == null || _reports!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Нет отчетов для анализа'),
+        SnackBar(
+          content: Text(l10n.noReportsToAnalyze),
           backgroundColor: Colors.orange,
         ),
       );
@@ -143,6 +146,8 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
             builder: (context) => BankReportScreen(
               reportResponse: reportResponse,
               comparativeAnalysis: result,
+              startDate: formattedDate,
+              selectedBankIds: _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
             ),
           ),
         );
@@ -155,7 +160,7 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при анализе отчетов: $e'),
+            content: Text('${l10n.errorAnalyzingReports} $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -169,13 +174,13 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
     }
   }
 
-  Widget _buildBankSelectionSection() {
+  Widget _buildBankSelectionSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Выберите банки',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          l10n.selectBanksShort,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -199,7 +204,7 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
               );
             }),
             FilterChip(
-              label: const Text('Все банки'),
+              label: Text(l10n.allBanks),
               selected: _selectedBankIds.isEmpty,
               onSelected: (selected) {
                 setState(() {
@@ -217,6 +222,9 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final months = _getMonths(l10n);
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -230,24 +238,24 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Произошла ошибка:\n$_errorMessage',
+              '${l10n.errorOccurred}\n$_errorMessage',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.red),
             ),
             const SizedBox(height: 16),
           ],
-          const Text(
-            'Выберите период',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            l10n.selectPeriod,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
                 child: DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(
-                    labelText: 'Год',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.year,
+                    border: const OutlineInputBorder(),
                   ),
                   value: _selectedYear,
                   items: _years.map((year) {
@@ -266,12 +274,12 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(
-                    labelText: 'Месяц',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.month,
+                    border: const OutlineInputBorder(),
                   ),
                   value: _selectedMonth,
-                  items: _months.entries.map((entry) {
+                  items: months.entries.map((entry) {
                     return DropdownMenuItem(
                       value: entry.key,
                       child: Text(entry.value),
@@ -287,14 +295,14 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          _buildBankSelectionSection(),
+          _buildBankSelectionSection(l10n),
           const SizedBox(height: 20),
           if (_selectedYear != null && _selectedMonth != null)
             Center(
               child: ElevatedButton.icon(
                 onPressed: _isLoading ? null : _loadReports,
                 icon: const Icon(Icons.search),
-                label: const Text('Найти отчеты'),
+                label: Text(l10n.findReports),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -315,14 +323,14 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Найденные отчеты:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.foundReports,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 ElevatedButton.icon(
                   onPressed: _isLoading ? null : _analyzeReports,
                   icon: const Icon(Icons.analytics),
-                  label: const Text('Проанализировать отчеты'),
+                  label: Text(l10n.analyzeReports),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -349,7 +357,7 @@ class _PdfReportsScreenState extends State<PdfReportsScreen> {
                     trailing: IconButton(
                       icon: const Icon(Icons.open_in_new),
                       onPressed: () => _downloadReport(report),
-                      tooltip: 'Открыть отчет',
+                      tooltip: l10n.openReport,
                     ),
                   ),
                 );

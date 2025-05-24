@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ComparativeAnalysisWidget extends StatelessWidget {
   final Map<String, dynamic>? comparativeAnalysis;
@@ -10,6 +11,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     print('ComparativeAnalysisWidget data: $comparativeAnalysis');
 
     if (comparativeAnalysis == null ||
@@ -47,7 +49,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Сравнительный анализ недоступен',
+              l10n.comparativeAnalysisUnavailable,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -56,7 +58,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Данные для сравнения банков не найдены',
+              l10n.comparativeAnalysisDataNotFound,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -137,10 +139,10 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Сравнительный анализ',
-                      style: TextStyle(
+                      l10n.comparativeAnalysis,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -158,15 +160,16 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                 children: [
                   // Рейтинг по активам
                   if (assetsComparison['ranking'] != null) ...[
-                    _buildSectionHeader('🏆 Рейтинг по активам',
+                    _buildSectionHeader(l10n.assetsRanking,
                         Icons.account_balance_wallet, Colors.green),
                     const SizedBox(height: 16),
                     _buildRankingCard(
                       List<Map<String, dynamic>>.from(
                           assetsComparison['ranking']),
                       valueKey: 'value',
-                      valueSuffix: ' тыс. сом',
+                      valueSuffix: ' ${l10n.thousandSom}',
                       color: Colors.green,
+                      l10n: l10n,
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -174,15 +177,16 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   // Рейтинг по прибыльности
                   if (profitabilityComparison['net_profit']?['ranking'] !=
                       null) ...[
-                    _buildSectionHeader('💰 Рейтинг по чистой прибыли',
+                    _buildSectionHeader(l10n.netProfitRanking,
                         Icons.trending_up, Colors.blue),
                     const SizedBox(height: 16),
                     _buildRankingCard(
                       List<Map<String, dynamic>>.from(
                           profitabilityComparison['net_profit']['ranking']),
                       valueKey: 'value',
-                      valueSuffix: ' тыс. сом',
+                      valueSuffix: ' ${l10n.thousandSom}',
                       color: Colors.blue,
+                      l10n: l10n,
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -190,7 +194,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   // ROA рейтинг
                   if (profitabilityComparison['roa']?['ranking'] != null) ...[
                     _buildSectionHeader(
-                        '📊 Рейтинг по ROA', Icons.show_chart, Colors.purple),
+                        l10n.roaRanking, Icons.show_chart, Colors.purple),
                     const SizedBox(height: 16),
                     _buildRankingCard(
                       List<Map<String, dynamic>>.from(
@@ -198,6 +202,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                       valueKey: 'value',
                       valueSuffix: '%',
                       color: Colors.purple,
+                      l10n: l10n,
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -205,7 +210,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   // ROE рейтинг
                   if (profitabilityComparison['roe']?['ranking'] != null) ...[
                     _buildSectionHeader(
-                        '📈 Рейтинг по ROE', Icons.trending_up, Colors.teal),
+                        l10n.roeRanking, Icons.trending_up, Colors.teal),
                     const SizedBox(height: 16),
                     _buildRankingCard(
                       List<Map<String, dynamic>>.from(
@@ -213,13 +218,14 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                       valueKey: 'value',
                       valueSuffix: '%',
                       color: Colors.teal,
+                      l10n: l10n,
                     ),
                     const SizedBox(height: 24),
                   ],
 
                   // Темпы роста
                   if (assetsComparison['growth_rates'] != null) ...[
-                    _buildSectionHeader('🚀 Темпы роста активов',
+                    _buildSectionHeader(l10n.assetsGrowthRates,
                         Icons.trending_up, Colors.orange),
                     const SizedBox(height: 16),
                     _buildRankingCard(
@@ -228,6 +234,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                       valueKey: 'growth_percent',
                       valueSuffix: '%',
                       color: Colors.orange,
+                      l10n: l10n,
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -235,7 +242,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   // Обзор рынка
                   if (detailedConclusion['market_overview'] != null) ...[
                     _buildInfoCard(
-                      '🏦 Обзор рынка',
+                      l10n.marketOverview,
                       detailedConclusion['market_overview'],
                       Colors.indigo,
                       Icons.assessment,
@@ -247,7 +254,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   if (detailedConclusion['key_trends']?.isNotEmpty ??
                       false) ...[
                     _buildListCard(
-                      '📈 Ключевые тренды',
+                      l10n.keyTrends,
                       List<String>.from(detailedConclusion['key_trends']),
                       Colors.blue,
                       Icons.trending_up,
@@ -259,7 +266,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   if (detailedConclusion['recommendations']?.isNotEmpty ??
                       false) ...[
                     _buildListCard(
-                      '💡 Рекомендации',
+                      l10n.recommendations,
                       List<String>.from(detailedConclusion['recommendations']),
                       Colors.green,
                       Icons.lightbulb_outline,
@@ -271,7 +278,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   if (detailedConclusion['risk_factors']?.isNotEmpty ??
                       false) ...[
                     _buildListCard(
-                      '⚠️ Факторы риска',
+                      l10n.riskFactors,
                       List<String>.from(detailedConclusion['risk_factors']),
                       Colors.red,
                       Icons.warning_amber,
@@ -282,7 +289,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                   // Прогноз
                   if (detailedConclusion['outlook'] != null) ...[
                     _buildInfoCard(
-                      '🔮 Прогноз',
+                      l10n.outlook,
                       detailedConclusion['outlook'],
                       Colors.purple,
                       Icons.insights,
@@ -337,6 +344,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
     required String valueKey,
     String valueSuffix = '',
     required Color color,
+    required AppLocalizations l10n,
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -440,7 +448,7 @@ class ComparativeAnalysisWidget extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
-                    item['bank'] ?? 'Неизвестно',
+                    item['bank'] ?? l10n.unknown,
                     style: TextStyle(
                       fontWeight: index < 3 ? FontWeight.bold : FontWeight.w500,
                       fontSize: 16,

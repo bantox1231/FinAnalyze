@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/api_service.dart';
 import '../models/bank_report.dart';
 import 'package:file_selector/file_selector.dart';
@@ -31,19 +32,19 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   final List<int> _years =
       List.generate(DateTime.now().year - 2010 + 1, (index) => 2010 + index);
 
-  final Map<int, String> _months = {
-    1: 'Январь',
-    2: 'Февраль',
-    3: 'Март',
-    4: 'Апрель',
-    5: 'Май',
-    6: 'Июнь',
-    7: 'Июль',
-    8: 'Август',
-    9: 'Сентябрь',
-    10: 'Октябрь',
-    11: 'Ноябрь',
-    12: 'Декабрь',
+  Map<int, String> _getMonths(AppLocalizations l10n) => {
+    1: l10n.january,
+    2: l10n.february,
+    3: l10n.march,
+    4: l10n.april,
+    5: l10n.may,
+    6: l10n.june,
+    7: l10n.july,
+    8: l10n.august,
+    9: l10n.september,
+    10: l10n.october,
+    11: l10n.november,
+    12: l10n.december,
   };
 
   @override
@@ -105,6 +106,8 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                 BankReportScreen(
               reportResponse: _reportResponse!,
               comparativeAnalysis: _comparativeAnalysis,
+              startDate: formattedDate,
+              selectedBankIds: _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -139,6 +142,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   }
 
   Future<void> _pickFiles() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       const XTypeGroup typeGroup = XTypeGroup(
         label: 'PDF files',
@@ -161,7 +165,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               children: [
                 const Icon(Icons.error, color: Colors.white),
                 const SizedBox(width: 8),
-                Expanded(child: Text('Ошибка при выборе файлов: $e')),
+                Expanded(child: Text('${l10n.fileSelectionError} $e')),
               ],
             ),
             backgroundColor: Colors.red.shade600,
@@ -199,6 +203,8 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                 BankReportScreen(
               reportResponse: _reportResponse!,
               comparativeAnalysis: _comparativeAnalysis,
+              startDate: null, // PDF анализ не использует дату
+              selectedBankIds: _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -303,17 +309,17 @@ class _AnalysisScreenState extends State<AnalysisScreen>
     );
   }
 
-  Widget _buildBankSelectionSection() {
+  Widget _buildBankSelectionSection(AppLocalizations l10n) {
     return _buildGradientCard(
       color: Colors.blue,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader('Выбор банков', Icons.account_balance,
+          _buildSectionHeader(l10n.bankSelection, Icons.account_balance,
               color: Colors.blue),
           const SizedBox(height: 20),
           Text(
-            'Выберите банки для анализа или оставьте пустым для анализа всех банков',
+            l10n.bankSelectionDescription,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey.shade600,
@@ -363,9 +369,9 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 child: FilterChip(
-                  label: const Text(
-                    'Все банки',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  label: Text(
+                    l10n.allBanks,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   selected: _selectedBankIds.isEmpty,
                   onSelected: (selected) {
@@ -395,17 +401,17 @@ class _AnalysisScreenState extends State<AnalysisScreen>
     );
   }
 
-  Widget _buildFileSelectionSection() {
+  Widget _buildFileSelectionSection(AppLocalizations l10n) {
     return _buildGradientCard(
       color: Colors.purple,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader('Загрузка PDF файлов', Icons.cloud_upload,
+          _buildSectionHeader(l10n.uploadPdf, Icons.cloud_upload,
               color: Colors.purple),
           const SizedBox(height: 20),
           Text(
-            'Загрузите собственные отчеты банков в формате PDF для анализа',
+            l10n.uploadPdfDescription,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey.shade600,
@@ -430,9 +436,9 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               child: ElevatedButton.icon(
                 onPressed: _isLoading ? null : _pickFiles,
                 icon: const Icon(Icons.upload_file, size: 24),
-                label: const Text(
-                  'Выбрать PDF файлы',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                label: Text(
+                  l10n.selectPdfFiles,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -464,7 +470,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       Icon(Icons.folder_open, color: Colors.purple.shade600),
                       const SizedBox(width: 8),
                       Text(
-                        'Выбранные файлы (${_selectedFiles!.length})',
+                        '${l10n.selectedFiles} (${_selectedFiles!.length})',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -515,7 +521,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                               icon:
                                   Icon(Icons.close, color: Colors.red.shade400),
                               onPressed: () => _removeFile(index),
-                              tooltip: 'Удалить файл',
+                              tooltip: l10n.removeFile,
                             ),
                           ],
                         ),
@@ -544,9 +550,9 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                 child: ElevatedButton.icon(
                   onPressed: _isLoading ? null : _analyzePdfFiles,
                   icon: const Icon(Icons.analytics, size: 24),
-                  label: const Text(
-                    'Провести анализ',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  label: Text(
+                    l10n.conductAnalysis,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
@@ -567,17 +573,19 @@ class _AnalysisScreenState extends State<AnalysisScreen>
     );
   }
 
-  Widget _buildPeriodSelection() {
+  Widget _buildPeriodSelection(AppLocalizations l10n) {
+    final months = _getMonths(l10n);
+    
     return _buildGradientCard(
       color: Colors.teal,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader('Период анализа', Icons.calendar_today,
+          _buildSectionHeader(l10n.periodAnalysis, Icons.calendar_today,
               color: Colors.teal),
           const SizedBox(height: 20),
           Text(
-            'Выберите год и месяц для получения данных из базы НБКР',
+            l10n.periodDescription,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey.shade600,
@@ -600,7 +608,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   ),
                   child: DropdownButtonFormField<int>(
                     decoration: InputDecoration(
-                      labelText: 'Год',
+                      labelText: l10n.year,
                       labelStyle: TextStyle(color: Colors.teal.shade600),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -650,7 +658,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   ),
                   child: DropdownButtonFormField<int>(
                     decoration: InputDecoration(
-                      labelText: 'Месяц',
+                      labelText: l10n.month,
                       labelStyle: TextStyle(color: Colors.teal.shade600),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -671,7 +679,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                           color: Colors.teal.shade600),
                     ),
                     value: _selectedMonth,
-                    items: _months.entries.map((entry) {
+                    items: months.entries.map((entry) {
                       return DropdownMenuItem(
                         value: entry.key,
                         child: Text(entry.value),
@@ -707,9 +715,9 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                 child: ElevatedButton.icon(
                   onPressed: _isLoading ? null : _loadReport,
                   icon: const Icon(Icons.search, size: 24),
-                  label: const Text(
-                    'Получить отчет',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  label: Text(
+                    l10n.getReport,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
@@ -729,7 +737,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
     );
   }
 
-  Widget _buildLoadingIndicator() {
+  Widget _buildLoadingIndicator(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -756,7 +764,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           ),
           const SizedBox(height: 24),
           Text(
-            'Анализируем данные...',
+            l10n.analyzingData,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -765,7 +773,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            'Это может занять несколько минут',
+            l10n.loadingTime,
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey.shade600,
@@ -776,7 +784,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
     );
   }
 
-  Widget _buildErrorWidget() {
+  Widget _buildErrorWidget(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -793,7 +801,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           ),
           const SizedBox(height: 16),
           Text(
-            'Произошла ошибка',
+            l10n.errorOccurredTitle,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -816,6 +824,8 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -829,7 +839,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           ),
         ),
         child: _isLoading
-            ? Center(child: _buildLoadingIndicator())
+            ? Center(child: _buildLoadingIndicator(l10n))
             : SlideTransition(
                 position: _slideAnimation,
                 child: FadeTransition(
@@ -840,12 +850,12 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (_isError) ...[
-                          _buildErrorWidget(),
+                          _buildErrorWidget(l10n),
                           const SizedBox(height: 24),
                         ],
-                        _buildPeriodSelection(),
+                        _buildPeriodSelection(l10n),
                         const SizedBox(height: 24),
-                        _buildBankSelectionSection(),
+                        _buildBankSelectionSection(l10n),
                         const SizedBox(height: 32),
                         Container(
                           width: double.infinity,
@@ -864,7 +874,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                           ),
                         ),
                         const SizedBox(height: 32),
-                        _buildFileSelectionSection(),
+                        _buildFileSelectionSection(l10n),
                       ],
                     ),
                   ),

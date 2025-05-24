@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'models/bank_report.dart';
 import 'screens/bank_report_screen.dart';
 import 'services/api_service.dart';
+import 'services/locale_service.dart';
 import 'package:file_selector/file_selector.dart';
 import 'screens/pdf_reports_screen.dart';
 import 'screens/analysis_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,13 +18,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Анализ банков',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      home: const MainScreen(),
+    return AnimatedBuilder(
+      animation: LocaleService.instance,
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'FinAnalyze',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+            useMaterial3: true,
+          ),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: LocaleService.supportedLocales,
+          locale: LocaleService.instance.locale,
+          home: const MainScreen(),
+        );
+      },
     );
   }
 }
@@ -47,8 +63,61 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _showLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          title: Text(l10n.language),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(l10n.russian),
+                leading: Radio<Locale>(
+                  value: const Locale('ru'),
+                  groupValue: LocaleService.instance.locale,
+                  onChanged: (Locale? value) {
+                    if (value != null) {
+                      LocaleService.instance.setLocale(value);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                ),
+                onTap: () {
+                  LocaleService.instance.setLocale(const Locale('ru'));
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                title: Text(l10n.kyrgyz),
+                leading: Radio<Locale>(
+                  value: const Locale('ky'),
+                  groupValue: LocaleService.instance.locale,
+                  onChanged: (Locale? value) {
+                    if (value != null) {
+                      LocaleService.instance.setLocale(value);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                ),
+                onTap: () {
+                  LocaleService.instance.setLocale(const Locale('ky'));
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -81,7 +150,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              _selectedIndex == 0 ? 'Анализ банков КР' : 'Отчеты банков',
+              _selectedIndex == 0 ? l10n.bankAnalysisTitle : l10n.reportsTitle,
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -89,6 +158,13 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.language, color: Colors.white),
+            onPressed: _showLanguageDialog,
+            tooltip: l10n.language,
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -127,16 +203,16 @@ class _MainScreenState extends State<MainScreen> {
           selectedItemColor: Theme.of(context).colorScheme.primary,
           unselectedItemColor: Colors.grey.shade500,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          items: const <BottomNavigationBarItem>[
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.analytics),
-              activeIcon: Icon(Icons.analytics, size: 28),
-              label: 'Анализ',
+              icon: const Icon(Icons.analytics),
+              activeIcon: const Icon(Icons.analytics, size: 28),
+              label: l10n.analysisTab,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.picture_as_pdf),
-              activeIcon: Icon(Icons.picture_as_pdf, size: 28),
-              label: 'Отчеты',
+              icon: const Icon(Icons.picture_as_pdf),
+              activeIcon: const Icon(Icons.picture_as_pdf, size: 28),
+              label: l10n.reportsTab,
             ),
           ],
           currentIndex: _selectedIndex,
@@ -167,19 +243,19 @@ class _HomePageState extends State<HomePage> {
   final List<int> _years =
       List.generate(DateTime.now().year - 2010 + 1, (index) => 2010 + index);
 
-  final Map<int, String> _months = {
-    1: 'Январь',
-    2: 'Февраль',
-    3: 'Март',
-    4: 'Апрель',
-    5: 'Май',
-    6: 'Июнь',
-    7: 'Июль',
-    8: 'Август',
-    9: 'Сентябрь',
-    10: 'Октябрь',
-    11: 'Ноябрь',
-    12: 'Декабрь',
+  Map<int, String> _getMonths(AppLocalizations l10n) => {
+    1: l10n.january,
+    2: l10n.february,
+    3: l10n.march,
+    4: l10n.april,
+    5: l10n.may,
+    6: l10n.june,
+    7: l10n.july,
+    8: l10n.august,
+    9: l10n.september,
+    10: l10n.october,
+    11: l10n.november,
+    12: l10n.december,
   };
 
   Future<void> _loadData() async {
@@ -207,6 +283,8 @@ class _HomePageState extends State<HomePage> {
             builder: (context) => BankReportScreen(
               reportResponse: BankReportResponse.fromJson(data),
               comparativeAnalysis: data,
+              startDate: formattedDate,
+              selectedBankIds: _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
             ),
           ),
         );
@@ -228,9 +306,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _pickFiles() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final typeGroup = XTypeGroup(
-        label: 'PDF файлы',
+        label: l10n.pdfFiles,
         extensions: ['pdf'],
         mimeTypes: ['application/pdf'],
       );
@@ -248,7 +327,7 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при выборе файлов: $e'),
+            content: Text('${l10n.fileSelectionError} $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -267,6 +346,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _uploadFiles() async {
     if (_selectedFiles == null || _selectedFiles!.isEmpty) return;
 
+    final l10n = AppLocalizations.of(context)!;
     try {
       setState(() {
         _isLoading = true;
@@ -282,6 +362,7 @@ class _HomePageState extends State<HomePage> {
             builder: (context) => BankReportScreen(
               reportResponse: BankReportResponse.fromJson(result),
               comparativeAnalysis: result,
+              // Для загруженных PDF файлов параметры не передаем
             ),
           ),
         );
@@ -294,7 +375,7 @@ class _HomePageState extends State<HomePage> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при отправке файлов: $e'),
+            content: Text('${l10n.fileSendError} $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -308,13 +389,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _buildBankSelectionSection() {
+  Widget _buildBankSelectionSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Выберите банки для анализа',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          l10n.selectBanks,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -338,7 +419,7 @@ class _HomePageState extends State<HomePage> {
               );
             }),
             FilterChip(
-              label: const Text('Все банки'),
+              label: Text(l10n.allBanks),
               selected: _selectedBankIds.isEmpty,
               onSelected: (selected) {
                 setState(() {
@@ -356,12 +437,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final months = _getMonths(l10n);
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text(
-          'Анализ банков КР',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          l10n.bankAnalysisTitle,
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: Center(
@@ -371,8 +455,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Загрузка данных...\nЭто может занять несколько минут',
+                  Text(
+                    '${l10n.loading}\n${l10n.loadingTime}',
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -390,16 +474,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Произошла ошибка:\n$_errorMessage',
+                        '${l10n.errorOccurred}\n$_errorMessage',
                         textAlign: TextAlign.center,
                         style: const TextStyle(color: Colors.red),
                       ),
                       const SizedBox(height: 16),
                     ],
-                    const Text(
-                      'Выберите период для анализа',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    Text(
+                      l10n.selectPeriod,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -407,9 +490,9 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<int>(
-                            decoration: const InputDecoration(
-                              labelText: 'Год',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: l10n.year,
+                              border: const OutlineInputBorder(),
                             ),
                             value: _selectedYear,
                             items: _years.map((year) {
@@ -428,12 +511,12 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: DropdownButtonFormField<int>(
-                            decoration: const InputDecoration(
-                              labelText: 'Месяц',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              labelText: l10n.month,
+                              border: const OutlineInputBorder(),
                             ),
                             value: _selectedMonth,
-                            items: _months.entries.map((entry) {
+                            items: months.entries.map((entry) {
                               return DropdownMenuItem(
                                 value: entry.key,
                                 child: Text(entry.value),
@@ -449,13 +532,13 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildBankSelectionSection(),
+                    _buildBankSelectionSection(l10n),
                     const SizedBox(height: 20),
                     if (_selectedYear != null && _selectedMonth != null)
                       ElevatedButton.icon(
                         onPressed: _loadData,
                         icon: const Icon(Icons.download),
-                        label: const Text('Получить анализ'),
+                        label: Text(l10n.getAnalysis),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
@@ -466,16 +549,15 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 32),
                     const Divider(),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Загрузка своих отчетов',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    Text(
+                      l10n.uploadReports,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                       onPressed: _pickFiles,
                       icon: const Icon(Icons.upload_file),
-                      label: const Text('Выбрать файлы'),
+                      label: Text(l10n.selectFiles),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
@@ -487,7 +569,7 @@ class _HomePageState extends State<HomePage> {
                         _selectedFiles!.isNotEmpty) ...[
                       const SizedBox(height: 16),
                       Text(
-                        'Выбранные файлы (${_selectedFiles!.length}):',
+                        '${l10n.selectedFiles} (${_selectedFiles!.length}):',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
@@ -507,13 +589,13 @@ class _HomePageState extends State<HomePage> {
                                 builder: (context, snapshot) {
                                   return Text(snapshot.hasData
                                       ? '${(snapshot.data! / 1024).toStringAsFixed(2)} KB'
-                                      : 'Вычисление размера...');
+                                      : l10n.sizeCalculation);
                                 },
                               ),
                               trailing: IconButton(
                                 icon: const Icon(Icons.close),
                                 onPressed: () => _removeFile(index),
-                                tooltip: 'Удалить файл',
+                                tooltip: l10n.removeFile,
                               ),
                             );
                           },
@@ -523,7 +605,7 @@ class _HomePageState extends State<HomePage> {
                       ElevatedButton.icon(
                         onPressed: _uploadFiles,
                         icon: const Icon(Icons.send),
-                        label: const Text('Получить анализ'),
+                        label: Text(l10n.sendFiles),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 24,
