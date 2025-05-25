@@ -14,10 +14,8 @@ class ComparativeAnalysisWidget extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     print('ComparativeAnalysisWidget data: $comparativeAnalysis');
 
-    if (comparativeAnalysis == null ||
-        !comparativeAnalysis!.containsKey('comparative_analysis') ||
-        !comparativeAnalysis!['comparative_analysis']
-            .containsKey('comparative_analysis')) {
+    // Безопасная проверка данных
+    if (comparativeAnalysis == null) {
       return Container(
         margin: const EdgeInsets.all(16.0),
         padding: const EdgeInsets.all(24.0),
@@ -70,8 +68,82 @@ class ComparativeAnalysisWidget extends StatelessWidget {
       );
     }
 
-    final analysis =
-        comparativeAnalysis!['comparative_analysis']['comparative_analysis'];
+    // Проверяем есть ли данные сравнительного анализа
+    Map<String, dynamic>? analysis;
+    try {
+      if (comparativeAnalysis!.containsKey('comparative_analysis') &&
+          comparativeAnalysis!['comparative_analysis'] != null &&
+          comparativeAnalysis!['comparative_analysis'].containsKey('comparative_analysis')) {
+        analysis = comparativeAnalysis!['comparative_analysis']['comparative_analysis'];
+      }
+    } catch (e) {
+      print('Error accessing comparative analysis: $e');
+    }
+
+    // Если нет данных сравнительного анализа, показываем простую информацию
+    if (analysis == null) {
+      return Container(
+        margin: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.primary.withOpacity(0.08),
+              Theme.of(context).colorScheme.secondary.withOpacity(0.03),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.analytics,
+                size: 32,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.comparativeAnalysis,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Данные анализа успешно загружены',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
     final conclusions = analysis['conclusions'] ?? {};
     final assetsComparison = analysis['assets_comparison'] ?? {};
     final profitabilityComparison = analysis['profitability_comparison'] ?? {};

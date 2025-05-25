@@ -8,9 +8,15 @@ class LocaleService extends ChangeNotifier {
   Locale get locale => _locale;
   
   void setLocale(Locale locale) {
+    print('LocaleService.setLocale вызван с: $locale');
+    print('Текущий _locale: $_locale');
     if (_locale != locale) {
       _locale = locale;
+      print('Язык изменен на: $_locale');
       notifyListeners();
+      print('notifyListeners() вызван');
+    } else {
+      print('Язык не изменился, остается: $_locale');
     }
   }
   

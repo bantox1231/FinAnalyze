@@ -1,35 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:file_selector/file_selector.dart';
 import '../models/bank_report.dart';
 import '../widgets/bank_carousel.dart';
 import '../widgets/comparative_analysis_widget.dart';
 import '../services/locale_service.dart';
 import '../services/api_service.dart';
 
-// Расширение для добавления цветов
-extension CustomColors on Colors {
-  static const MaterialColor emerald = MaterialColor(
-    0xFF10B981,
-    <int, Color>{
-      50: Color(0xFFECFDF5),
-      100: Color(0xFFD1FAE5),
-      200: Color(0xFFA7F3D0),
-      300: Color(0xFF6EE7B7),
-      400: Color(0xFF34D399),
-      500: Color(0xFF10B981),
-      600: Color(0xFF059669),
-      700: Color(0xFF047857),
-      800: Color(0xFF065F46),
-      900: Color(0xFF064E3B),
-    },
-  );
-}
-
 class BankReportScreen extends StatefulWidget {
   final BankReportResponse reportResponse;
   final Map<String, dynamic>? comparativeAnalysis;
   final String? startDate;
   final List<int>? selectedBankIds;
+  final List<XFile>? selectedFiles; // Добавляем поддержку файлов
 
   const BankReportScreen({
     Key? key,
@@ -37,6 +20,7 @@ class BankReportScreen extends StatefulWidget {
     this.comparativeAnalysis,
     this.startDate,
     this.selectedBankIds,
+    this.selectedFiles, // Добавляем в конструктор
   }) : super(key: key);
 
   @override
@@ -125,6 +109,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                   groupValue: LocaleService.instance.locale,
                   onChanged: (Locale? value) {
                     if (value != null) {
+                      print('Выбран русский язык: $value');
                       LocaleService.instance.setLocale(value);
                       Navigator.of(context).pop();
                       _reloadReportForLanguage();
@@ -132,6 +117,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                   },
                 ),
                 onTap: () {
+                  print('Нажат русский язык');
                   LocaleService.instance.setLocale(const Locale('ru'));
                   Navigator.of(context).pop();
                   _reloadReportForLanguage();
@@ -144,6 +130,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                   groupValue: LocaleService.instance.locale,
                   onChanged: (Locale? value) {
                     if (value != null) {
+                      print('Выбран кыргызский язык: $value');
                       LocaleService.instance.setLocale(value);
                       Navigator.of(context).pop();
                       _reloadReportForLanguage();
@@ -151,6 +138,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                   },
                 ),
                 onTap: () {
+                  print('Нажат кыргызский язык');
                   LocaleService.instance.setLocale(const Locale('ky'));
                   Navigator.of(context).pop();
                   _reloadReportForLanguage();
@@ -164,18 +152,33 @@ class _BankReportScreenState extends State<BankReportScreen>
   }
 
   Future<void> _reloadReportForLanguage() async {
-    // Перезагружаем отчет только если есть startDate
-    if (widget.startDate == null) return;
-    
     setState(() {
       _isReloading = true;
     });
 
     try {
-      final result = await _apiService.fetchBankReport(
-        startDate: widget.startDate!,
-        selectedBankIds: widget.selectedBankIds,
-      );
+      Map<String, dynamic> result;
+      
+      if (widget.selectedFiles != null && widget.selectedFiles!.isNotEmpty) {
+        // Если есть PDF файлы - перезагружаем анализ PDF с новым языком
+        print('Перезагружаем PDF анализ с новым языком');
+        result = await _apiService.analyzePdfFiles(widget.selectedFiles!);
+      } else if (widget.startDate != null) {
+        // Если есть дата - загружаем по дате
+        print('Перезагружаем анализ по дате с новым языком');
+        result = await _apiService.fetchBankReport(
+          startDate: widget.startDate!,
+          selectedBankIds: widget.selectedBankIds,
+        );
+      } else {
+        // Если ничего нет - показываем текущие данные
+        if (mounted) {
+          setState(() {
+            _isReloading = false;
+          });
+        }
+        return;
+      }
 
       if (mounted) {
         setState(() {
@@ -209,32 +212,25 @@ class _BankReportScreenState extends State<BankReportScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white,
-            Colors.grey.shade50,
+            Theme.of(context).colorScheme.primary.withOpacity(0.08),
+            Theme.of(context).colorScheme.secondary.withOpacity(0.03),
           ],
         ),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.grey.shade200,
-          width: 1.2,
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 25,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
             offset: const Offset(0, 8),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 50,
-            offset: const Offset(0, 16),
-            spreadRadius: 0,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(20),
         child: child,
       ),
     );
@@ -242,51 +238,48 @@ class _BankReportScreenState extends State<BankReportScreen>
 
   Widget _buildSectionHeader(String title, IconData icon, {Color? color}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
+            (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.1),
             (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.05),
-            Colors.transparent,
           ],
         ),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.15),
-                  (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.08),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.1),
-                width: 1,
-              ),
+              color: (color ?? Theme.of(context).colorScheme.primary)
+                  .withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: (color ?? Theme.of(context).colorScheme.primary)
+                      .withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Icon(
               icon,
               color: color ?? Theme.of(context).colorScheme.primary,
-              size: 26,
+              size: 24,
             ),
           ),
-          const SizedBox(width: 18),
+          const SizedBox(width: 16),
           Expanded(
             child: Text(
               title,
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.9),
-                letterSpacing: 0.3,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color ?? Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -304,42 +297,34 @@ class _BankReportScreenState extends State<BankReportScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Современный заголовок банка
+              // Заголовок банка как в главном экране
               Container(
-                padding: const EdgeInsets.all(28),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                     colors: [
                       Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.primary.withOpacity(0.85),
+                      Theme.of(context).colorScheme.primary.withOpacity(0.8),
                     ],
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(28),
-                    topRight: Radius.circular(28),
                   ),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
-                        ),
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
                         Icons.account_balance,
                         color: Colors.white,
-                        size: 32,
+                        size: 28,
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,26 +332,16 @@ class _BankReportScreenState extends State<BankReportScreen>
                           Text(
                             analysis.bankName,
                             style: const TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w800,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              letterSpacing: 0.5,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              '${l10n.period} ${analysis.currentPeriod}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
+                          Text(
+                            '${l10n.period} ${analysis.currentPeriod}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.9),
                             ),
                           ),
                         ],
@@ -387,7 +362,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                     if (analysis.balance.isNotEmpty) ...[
                       _buildSectionHeader(
                           l10n.balance, Icons.account_balance_wallet,
-                          color: CustomColors.emerald.shade600),
+                          color: Colors.green),
                       const SizedBox(height: 8),
                       _buildBalanceSection(analysis.balance, l10n),
                       const SizedBox(height: 28),
@@ -397,7 +372,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                     if (analysis.incomeStatement.isNotEmpty) ...[
                       _buildSectionHeader(
                           l10n.incomeStatement, Icons.trending_up,
-                          color: Colors.blue.shade600),
+                          color: Colors.blue),
                       const SizedBox(height: 8),
                       _buildIncomeStatementSection(analysis.incomeStatement, l10n),
                       const SizedBox(height: 28),
@@ -407,7 +382,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                     if (analysis.ratios.isNotEmpty) ...[
                       _buildSectionHeader(
                           l10n.financialRatios, Icons.analytics,
-                          color: Colors.purple.shade600),
+                          color: Colors.purple),
                       const SizedBox(height: 8),
                       _buildRatiosSection(analysis.ratios, l10n),
                       const SizedBox(height: 28),
@@ -692,8 +667,8 @@ class _BankReportScreenState extends State<BankReportScreen>
     final percentValue = percentMatch.group(1)!;
     final isPositive = !percentValue.startsWith('-');
 
-    final bgColor = isPositive ? CustomColors.emerald.shade500 : Colors.red.shade500;
-    final shadowColor = isPositive ? CustomColors.emerald.shade600 : Colors.red.shade600;
+    final bgColor = isPositive ? Colors.green.shade500 : Colors.red.shade500;
+    final shadowColor = isPositive ? Colors.green.shade600 : Colors.red.shade600;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -755,13 +730,13 @@ class _BankReportScreenState extends State<BankReportScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  CustomColors.emerald.shade50,
+                  Colors.green.shade50,
                   Colors.white,
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: CustomColors.emerald.shade100,
+                color: Colors.green.shade100,
                 width: 1.2,
               ),
             ),
@@ -773,12 +748,12 @@ class _BankReportScreenState extends State<BankReportScreen>
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: CustomColors.emerald.shade100,
+                        color: Colors.green.shade100,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.trending_up,
-                        color: CustomColors.emerald.shade600,
+                        color: Colors.green.shade600,
                         size: 20,
                       ),
                     ),
@@ -789,7 +764,7 @@ class _BankReportScreenState extends State<BankReportScreen>
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: CustomColors.emerald.shade700,
+                          color: Colors.green.shade700,
                         ),
                       ),
                     ),
@@ -873,7 +848,7 @@ class _BankReportScreenState extends State<BankReportScreen>
             height: 6,
             margin: const EdgeInsets.only(top: 6),
             decoration: BoxDecoration(
-              color: CustomColors.emerald.shade500,
+              color: Colors.green.shade500,
               shape: BoxShape.circle,
             ),
           ),
@@ -1038,26 +1013,25 @@ class _BankReportScreenState extends State<BankReportScreen>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.grey.shade50,
+                  Theme.of(context).colorScheme.primary.withOpacity(0.05),
                   Colors.white,
-                  Colors.grey.shade50.withOpacity(0.3),
                 ],
               ),
             ),
             child: Column(
               children: [
-                // Современный AppBar
+                // AppBar как в главном экране
                 Container(
                   padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top + 12,
-                    left: 20,
-                    right: 20,
-                    bottom: 12,
+                    top: MediaQuery.of(context).padding.top + 8,
+                    left: 16,
+                    right: 16,
+                    bottom: 8,
                   ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
                       colors: [
                         Theme.of(context).colorScheme.primary,
                         Theme.of(context).colorScheme.primary.withOpacity(0.9),
@@ -1065,77 +1039,50 @@ class _BankReportScreenState extends State<BankReportScreen>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 5),
                       ),
                     ],
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.2),
-                                  width: 1,
-                                ),
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
-                                Icons.analytics_rounded,
+                                Icons.analytics,
                                 color: Colors.white,
-                                size: 22,
+                                size: 20,
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                l10n.bankAnalysis,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.3,
-                                ),
+                            const SizedBox(width: 12),
+                            Text(
+                              l10n.bankAnalysis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.language, color: Colors.white, size: 20),
-                          onPressed: () => _showLanguageDialog(),
-                          tooltip: l10n.language,
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.language, color: Colors.white),
+                        onPressed: () => _showLanguageDialog(),
+                        tooltip: l10n.language,
                       ),
                     ],
                   ),

@@ -23,7 +23,13 @@ class ApiService {
   // Получаем текущий язык для API запросов
   String _getCurrentLanguageCode() {
     final locale = LocaleService.instance.locale;
-    return locale.languageCode == 'ky' ? 'ky' : 'ru';
+    final langCode = locale.languageCode == 'ky' ? 'ky' : 'ru';
+    print('=== ОТЛАДКА ЯЗЫКА ===');
+    print('LocaleService.instance.locale: $locale');
+    print('locale.languageCode: ${locale.languageCode}');
+    print('Итоговый langCode для API: $langCode');
+    print('====================');
+    return langCode;
   }
 
   Future<Map<String, dynamic>> fetchBankReport({
@@ -66,15 +72,25 @@ class ApiService {
 
   Future<Map<String, dynamic>> analyzePdfFiles(List<XFile> files) async {
     try {
-      final uri = Uri.parse('$baseUrl/analyze_by_pdf');
+      final queryParameters = {
+        'lang': _getCurrentLanguageCode() // Используем текущий язык
+      };
+      final uri = Uri.parse(baseUrl).replace(
+        path: '/analyze_by_pdf',
+        queryParameters: queryParameters,
+      );
       var request = http.MultipartRequest('POST', uri);
-      
+
+      // Добавляем параметр языка
+      // request.fields['lang'] = _getCurrentLanguageCode();
+
+      // Добавляем все файлы
       for (var file in files) {
         final multipartFile = await PlatformService.createMultipartFile(file);
         request.files.add(multipartFile);
       }
 
-      print('Отправка PDF файлов на: ${uri}');
+      print('Отправка ${files.length} PDF файлов на: ${uri} с языком: ${_getCurrentLanguageCode()}');
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
 

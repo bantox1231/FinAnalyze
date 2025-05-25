@@ -196,7 +196,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           _comparativeAnalysis = result;
         });
 
-        // Переходим к результатам
+        // Переходим к результатам с указанием что это PDF анализ
         Navigator.of(context).push(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
@@ -205,6 +205,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               comparativeAnalysis: _comparativeAnalysis,
               startDate: null, // PDF анализ не использует дату
               selectedBankIds: _selectedBankIds.isEmpty ? null : _selectedBankIds.toList(),
+              selectedFiles: _selectedFiles, // Передаем файлы для возможности перезагрузки
             ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
