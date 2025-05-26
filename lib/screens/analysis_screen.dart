@@ -282,31 +282,42 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   }
 
   Widget _buildSectionHeader(String title, IconData icon, {Color? color}) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: (color ?? Theme.of(context).colorScheme.primary)
-                .withOpacity(0.15),
-            borderRadius: BorderRadius.circular(12),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallScreen = constraints.maxWidth < 350;
+        return Flexible(
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                decoration: BoxDecoration(
+                  color: (color ?? Theme.of(context).colorScheme.primary)
+                      .withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  color: color ?? Theme.of(context).colorScheme.primary,
+                  size: isSmallScreen ? 20 : 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 18 : 22,
+                    fontWeight: FontWeight.bold,
+                    color: color ?? Theme.of(context).colorScheme.primary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
-          child: Icon(
-            icon,
-            color: color ?? Theme.of(context).colorScheme.primary,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: color ?? Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 

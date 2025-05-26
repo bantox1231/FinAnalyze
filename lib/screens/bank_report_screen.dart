@@ -237,54 +237,64 @@ class _BankReportScreenState extends State<BankReportScreen>
   }
 
   Widget _buildSectionHeader(String title, IconData icon, {Color? color}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.1),
-            (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.05),
-          ],
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: (color ?? Theme.of(context).colorScheme.primary)
-                  .withOpacity(0.2),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: (color ?? Theme.of(context).colorScheme.primary)
-                      .withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallScreen = constraints.maxWidth < 350;
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 16 : 20, 
+            vertical: isSmallScreen ? 12 : 16
+          ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.1),
+                (color ?? Theme.of(context).colorScheme.primary).withOpacity(0.05),
               ],
             ),
-            child: Icon(
-              icon,
-              color: color ?? Theme.of(context).colorScheme.primary,
-              size: 24,
-            ),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color ?? Theme.of(context).colorScheme.primary,
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                decoration: BoxDecoration(
+                  color: (color ?? Theme.of(context).colorScheme.primary)
+                      .withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (color ?? Theme.of(context).colorScheme.primary)
+                          .withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  icon,
+                  color: color ?? Theme.of(context).colorScheme.primary,
+                  size: isSmallScreen ? 20 : 24,
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 16 : 20,
+                    fontWeight: FontWeight.bold,
+                    color: color ?? Theme.of(context).colorScheme.primary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -534,9 +544,14 @@ class _BankReportScreenState extends State<BankReportScreen>
 
   Widget _buildBalanceRow(
       String icon, String title, String value, String? subtitle, Color color) {
+    // Проверяем размер экрана для адаптивной верстки
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final isMediumScreen = screenWidth < 600;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
@@ -559,95 +574,214 @@ class _BankReportScreenState extends State<BankReportScreen>
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  color.withOpacity(0.15),
-                  color.withOpacity(0.08),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: color.withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                icon,
-                style: const TextStyle(fontSize: 20),
-              ),
-            ),
-          ),
-          const SizedBox(width: 18),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.grey.shade800,
-                    letterSpacing: 0.2,
-                  ),
+      child: isSmallScreen
+          ? _buildSmallScreenLayout(icon, title, value, subtitle, color)
+          : _buildNormalScreenLayout(icon, title, value, subtitle, color, isMediumScreen),
+    );
+  }
+
+  Widget _buildSmallScreenLayout(String icon, String title, String value, String? subtitle, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    color.withOpacity(0.15),
+                    color.withOpacity(0.08),
+                  ],
                 ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 6),
-                  _buildPercentageBadge(subtitle, color),
-                ],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: color.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  icon,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: Colors.grey.shade800,
+                  letterSpacing: 0.2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        // Значение
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                color.withOpacity(0.12),
+                color.withOpacity(0.08),
               ],
             ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: color.withOpacity(0.15),
+              width: 1,
+            ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  color.withOpacity(0.12),
-                  color.withOpacity(0.08),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: color.withOpacity(0.15),
-                width: 1,
-              ),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: color.withOpacity(0.9),
+              fontSize: 16,
+              letterSpacing: 0.3,
             ),
-            child: Text(
-              value,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: color.withOpacity(0.9),
-                fontSize: 16,
-                letterSpacing: 0.3,
-              ),
-            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        // Процент изменения
+        if (subtitle != null) ...[
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.center,
+            child: _buildPercentageBadge(subtitle, color),
           ),
         ],
-      ),
+      ],
+    );
+  }
+
+  Widget _buildNormalScreenLayout(String icon, String title, String value, String? subtitle, Color color, bool isMediumScreen) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: isMediumScreen ? 44 : 48,
+              height: isMediumScreen ? 44 : 48,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    color.withOpacity(0.15),
+                    color.withOpacity(0.08),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: color.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  icon,
+                  style: TextStyle(fontSize: isMediumScreen ? 18 : 20),
+                ),
+              ),
+            ),
+            SizedBox(width: isMediumScreen ? 14 : 18),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: isMediumScreen ? 15 : 16,
+                  color: Colors.grey.shade800,
+                  letterSpacing: 0.2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            if (subtitle != null) ...[
+              Expanded(
+                child: _buildPercentageBadge(subtitle, color),
+              ),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMediumScreen ? 12 : 16, 
+                  vertical: isMediumScreen ? 10 : 12
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      color.withOpacity(0.12),
+                      color.withOpacity(0.08),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: color.withOpacity(0.15),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: color.withOpacity(0.9),
+                    fontSize: isMediumScreen ? 15 : 16,
+                    letterSpacing: 0.3,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
   Widget _buildPercentageBadge(String text, Color mainColor) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    
     // Извлекаем процент из текста
     final percentMatch = RegExp(r'([-+]?\d+(?:\.\d+)?%)').firstMatch(text);
     if (percentMatch == null) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 8 : 12, 
+          vertical: isSmallScreen ? 4 : 6
+        ),
         decoration: BoxDecoration(
           color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: Colors.grey.shade300,
             width: 1,
@@ -656,10 +790,12 @@ class _BankReportScreenState extends State<BankReportScreen>
         child: Text(
           text,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: isSmallScreen ? 11 : 12,
             fontWeight: FontWeight.w600,
             color: Colors.grey.shade700,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       );
     }
@@ -671,7 +807,10 @@ class _BankReportScreenState extends State<BankReportScreen>
     final shadowColor = isPositive ? Colors.green.shade600 : Colors.red.shade600;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallScreen ? 8 : 12, 
+        vertical: isSmallScreen ? 5 : 7
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -681,11 +820,11 @@ class _BankReportScreenState extends State<BankReportScreen>
             bgColor.withOpacity(0.8),
           ],
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: shadowColor.withOpacity(0.25),
-            blurRadius: 8,
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
@@ -699,17 +838,17 @@ class _BankReportScreenState extends State<BankReportScreen>
         children: [
           Icon(
             isPositive ? Icons.trending_up : Icons.trending_down,
-            size: 16,
+            size: isSmallScreen ? 14 : 16,
             color: Colors.white,
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: isSmallScreen ? 4 : 6),
           Text(
             percentValue,
-            style: const TextStyle(
-              fontSize: 13,
+            style: TextStyle(
+              fontSize: isSmallScreen ? 11 : 13,
               fontWeight: FontWeight.w700,
               color: Colors.white,
-              letterSpacing: 0.5,
+              letterSpacing: 0.3,
             ),
           ),
         ],
@@ -718,122 +857,239 @@ class _BankReportScreenState extends State<BankReportScreen>
   }
 
   Widget _buildAnalysisInsights(BankAnalysis analysis, AppLocalizations l10n) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Сильные стороны
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.green.shade50,
-                  Colors.white,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.green.shade100,
-                width: 1.2,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+
+    return isSmallScreen
+        ? Column(
+            children: [
+              // Сильные стороны
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.green.shade50,
+                      Colors.white,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.green.shade100,
+                    width: 1.2,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.trending_up,
-                        color: Colors.green.shade600,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l10n.strengths,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.green.shade700,
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.trending_up,
+                            color: Colors.green.shade600,
+                            size: 20,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.strengths,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.green.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 16),
+                    ..._buildStrengthsList(analysis),
                   ],
                 ),
-                const SizedBox(height: 16),
-                ..._buildStrengthsList(analysis),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        // Точки внимания
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.orange.shade50,
-                  Colors.white,
-                ],
               ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.orange.shade100,
-                width: 1.2,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              const SizedBox(height: 16),
+              // Точки внимания
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.orange.shade50,
+                      Colors.white,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.orange.shade100,
+                    width: 1.2,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.warning_rounded,
-                        color: Colors.orange.shade600,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l10n.attentionPoints,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.orange.shade700,
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.warning_rounded,
+                            color: Colors.orange.shade600,
+                            size: 20,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.attentionPoints,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.orange.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 16),
+                    ..._buildAttentionPointsList(analysis),
                   ],
                 ),
-                const SizedBox(height: 16),
-                ..._buildAttentionPointsList(analysis),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+              ),
+            ],
+          )
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Сильные стороны
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.green.shade50,
+                        Colors.white,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.green.shade100,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.trending_up,
+                              color: Colors.green.shade600,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              l10n.strengths,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.green.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ..._buildStrengthsList(analysis),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Точки внимания
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.orange.shade50,
+                        Colors.white,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.orange.shade100,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.warning_rounded,
+                              color: Colors.orange.shade600,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              l10n.attentionPoints,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.orange.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ..._buildAttentionPointsList(analysis),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
   }
 
   List<Widget> _buildStrengthsList(BankAnalysis analysis) {

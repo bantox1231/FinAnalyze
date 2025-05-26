@@ -377,37 +377,46 @@ class ComparativeAnalysisWidget extends StatelessWidget {
   }
 
   Widget _buildSectionHeader(String title, IconData icon, Color color) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallScreen = constraints.maxWidth < 350;
+        return Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
+              child: Icon(
+                icon,
+                color: color,
+                size: isSmallScreen ? 16 : 20,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: isSmallScreen ? 14 : 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -418,137 +427,222 @@ class ComparativeAnalysisWidget extends StatelessWidget {
     required Color color,
     required AppLocalizations l10n,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            color.withOpacity(0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: ranking.asMap().entries.map((entry) {
-          final index = entry.key;
-          final item = entry.value;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallScreen = constraints.maxWidth < 400;
+        final isMediumScreen = constraints.maxWidth < 600;
 
-          IconData positionIcon;
-          Color positionColor;
-
-          switch (index) {
-            case 0:
-              positionIcon = Icons.emoji_events;
-              positionColor = Colors.amber;
-              break;
-            case 1:
-              positionIcon = Icons.workspace_premium;
-              positionColor = Colors.grey.shade600;
-              break;
-            case 2:
-              positionIcon = Icons.military_tech;
-              positionColor = Colors.brown;
-              break;
-            default:
-              positionIcon = Icons.circle;
-              positionColor = color;
-              break;
-          }
-
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  index < 3
-                      ? positionColor.withOpacity(0.1)
-                      : Colors.grey.shade50,
-                  Colors.white,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: index < 3
-                    ? positionColor.withOpacity(0.3)
-                    : Colors.grey.shade200,
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: positionColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: index < 3
-                        ? Icon(
-                            positionIcon,
-                            color: positionColor,
-                            size: 20,
-                          )
-                        : Text(
-                            '${index + 1}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: positionColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    item['bank'] ?? l10n.unknown,
-                    style: TextStyle(
-                      fontWeight: index < 3 ? FontWeight.bold : FontWeight.w500,
-                      fontSize: 16,
-                      color: Colors.grey.shade800,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '${item[valueKey]}$valueSuffix',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
+        return Container(
+          padding: EdgeInsets.all(isSmallScreen ? 12 : 20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white,
+                color.withOpacity(0.05),
               ],
             ),
-          );
-        }).toList(),
-      ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: color.withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: ranking.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+
+              IconData positionIcon;
+              Color positionColor;
+
+              switch (index) {
+                case 0:
+                  positionIcon = Icons.emoji_events;
+                  positionColor = Colors.amber;
+                  break;
+                case 1:
+                  positionIcon = Icons.workspace_premium;
+                  positionColor = Colors.grey.shade600;
+                  break;
+                case 2:
+                  positionIcon = Icons.military_tech;
+                  positionColor = Colors.brown;
+                  break;
+                default:
+                  positionIcon = Icons.circle;
+                  positionColor = color;
+                  break;
+              }
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      index < 3
+                          ? positionColor.withOpacity(0.1)
+                          : Colors.grey.shade50,
+                      Colors.white,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: index < 3
+                        ? positionColor.withOpacity(0.3)
+                        : Colors.grey.shade200,
+                    width: 1,
+                  ),
+                ),
+                child: isSmallScreen
+                    ? _buildSmallRankingItem(index, item, positionIcon, positionColor, color, valueKey, valueSuffix, l10n)
+                    : _buildNormalRankingItem(index, item, positionIcon, positionColor, color, valueKey, valueSuffix, l10n, isMediumScreen),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSmallRankingItem(int index, Map<String, dynamic> item, IconData positionIcon, Color positionColor, Color color, String valueKey, String valueSuffix, AppLocalizations l10n) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: positionColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: index < 3
+                    ? Icon(
+                        positionIcon,
+                        color: positionColor,
+                        size: 16,
+                      )
+                    : Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: positionColor,
+                          fontSize: 12,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                item['bank'] ?? l10n.unknown,
+                style: TextStyle(
+                  fontWeight: index < 3 ? FontWeight.bold : FontWeight.w500,
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              '${item[valueKey]}$valueSuffix',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: color,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNormalRankingItem(int index, Map<String, dynamic> item, IconData positionIcon, Color positionColor, Color color, String valueKey, String valueSuffix, AppLocalizations l10n, bool isMediumScreen) {
+    return Row(
+      children: [
+        Container(
+          width: isMediumScreen ? 28 : 32,
+          height: isMediumScreen ? 28 : 32,
+          decoration: BoxDecoration(
+            color: positionColor.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: index < 3
+                ? Icon(
+                    positionIcon,
+                    color: positionColor,
+                    size: isMediumScreen ? 16 : 20,
+                  )
+                : Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: positionColor,
+                      fontSize: isMediumScreen ? 12 : 14,
+                    ),
+                  ),
+          ),
+        ),
+        SizedBox(width: isMediumScreen ? 12 : 16),
+        Expanded(
+          child: Text(
+            item['bank'] ?? l10n.unknown,
+            style: TextStyle(
+              fontWeight: index < 3 ? FontWeight.bold : FontWeight.w500,
+              fontSize: isMediumScreen ? 14 : 16,
+              color: Colors.grey.shade800,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isMediumScreen ? 8 : 12, 
+            vertical: isMediumScreen ? 4 : 6
+          ),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            '${item[valueKey]}$valueSuffix',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: color,
+              fontSize: isMediumScreen ? 12 : 14,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

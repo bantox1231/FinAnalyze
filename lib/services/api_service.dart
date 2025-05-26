@@ -10,7 +10,7 @@ import 'locale_service.dart';
 
 class ApiService {
   // Используем только локальную сеть для всех платформ
-  static const String baseUrl = 'http://192.168.169.60:8000';
+  static const String baseUrl = 'http://192.168.0.104:8000';
 
   static const Map<String, int> bankIds = {
     'KICB': 1,
